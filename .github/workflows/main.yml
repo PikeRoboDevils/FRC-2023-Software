@@ -1,0 +1,33 @@
+name: CI
+
+on: [push, pull_request, workflow_dispatch]
+
+jobs:
+  build:
+    name: "Build and Test"
+
+    runs-on: ubuntu-latest
+
+    container: wpilib/roborio-cross-ubuntu:2023-22.04
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - run: chmod +x ./gradlew
+
+      - name: Compile and run tests on robot code
+        run: ./gradlew build
+  check-style:
+    name: "Check Code Style"
+
+    runs-on: ubuntu-latest
+
+    container: wpilib/roborio-cross-ubuntu:2023-22.04
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - run: chmod +x ./gradlew
+
+      - name: Use spotless to check code style
+        run: ./gradlew spotlessCheck
