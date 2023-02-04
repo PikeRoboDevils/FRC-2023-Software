@@ -22,8 +22,6 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    container: wpilib/roborio-cross-ubuntu:2023-22.04
-
     steps:
       - uses: actions/checkout@v3
 
