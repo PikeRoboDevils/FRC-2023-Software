@@ -8,9 +8,16 @@ package org.pikerobodevils.frc2023;
 import static edu.wpi.first.wpilibj2.command.Commands.print;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import org.pikerobodevils.frc2023.subsystems.Drivetrain;
 
 public class RobotContainer {
+  Drivetrain drivetrain = new Drivetrain();
+  ControlBoard controlboard = new ControlBoard();
+
   public RobotContainer() {
+
+    drivetrain.setDefaultCommand(
+        drivetrain.arcadeDriveCommand(controlboard::getSpeed, controlboard::getTurn));
     configureBindings();
   }
 
