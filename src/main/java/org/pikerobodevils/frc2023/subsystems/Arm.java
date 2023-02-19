@@ -11,13 +11,21 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.wpilibj.CounterBase;
-import edu.wpi.first.wpilibj.DutyCycleEncoder;
-import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.*;
+import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
+import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
+import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.util.Color;
+import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import io.github.oblarg.oblog.Loggable;
+import io.github.oblarg.oblog.annotations.Log;
+import java.util.function.DoubleSupplier;
 
-public class Arm extends SubsystemBase {
+public class Arm extends SubsystemBase implements Loggable {
 
   CANSparkMax leftController =
       new CANSparkMax(LEFT_CONTROLLER_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
@@ -30,12 +38,24 @@ public class Arm extends SubsystemBase {
   ArmFeedforward feedforward = new ArmFeedforward(KS, KG, KV, KA);
   ProfiledPIDController controller = new ProfiledPIDController(KP, KI, KD, CONSTRAINTS);
 
+  private final Mechanism2d m_mech2d = new Mechanism2d(60, 60);
+  private final MechanismRoot2d m_armPivot = m_mech2d.getRoot("ArmPivot", 30, 30);
+  private final MechanismLigament2d m_armTower =
+      m_armPivot.append(new MechanismLigament2d("ArmTower", 30, -90));
+  private final MechanismLigament2d m_arm =
+      m_armPivot.append(new MechanismLigament2d("Arm", 30, 0, 6, new Color8Bit(Color.kYellow)));
+
   public Arm() {
     encoder.setDistancePerPulse(RAD_PER_QUAD_TICK);
     absoluteEncoder.setDistancePerRotation(RAD_PER_ENCODER_ROTATION);
     absoluteEncoder.setPositionOffset(ENCODER_OFFSET);
 
     setDefaultCommand(holdPositionCommand());
+
+    controller.reset(absoluteEncoder.getDistance());
+
+    m_armTower.setColor(new Color8Bit(Color.kBlue));
+    SmartDashboard.putData("ArmSim", m_mech2d);
   }
 
   /**
@@ -48,8 +68,18 @@ public class Arm extends SubsystemBase {
     rightController.setVoltage(volts);
   }
 
+  @Log(name = "Voltage")
+  public double getVoltage() {
+    return leftController.getAppliedOutput();
+  }
+
   public double getPosition() {
     return absoluteEncoder.getDistance();
+  }
+
+  @Log(name = "Position")
+  public double getPositionDeg() {
+    return Units.radiansToDegrees(getPosition());
   }
 
   /**
@@ -59,6 +89,11 @@ public class Arm extends SubsystemBase {
    */
   public double getVelocity() {
     return encoder.getRate();
+  }
+
+  @Log(name = "Velocity")
+  public double getVelocityDeg() {
+    return Units.radiansToDegrees(getVelocity());
   }
 
   /**
@@ -80,6 +115,16 @@ public class Arm extends SubsystemBase {
     controller.setGoal(goal);
   }
 
+  @Log(name = "Setpoint Position")
+  public double getSetpointPosition() {
+    return Units.radiansToDegrees(controller.getSetpoint().position);
+  }
+
+  @Log(name = "Setpoint Velocity")
+  public double getSetpointVelocity() {
+    return Units.radiansToDegrees(controller.getSetpoint().velocity);
+  }
+
   public void updatePositionController(double setpoint) {
     setGoal(setpoint);
     updatePositionController();
@@ -91,7 +136,7 @@ public class Arm extends SubsystemBase {
     var feedbackOutput = controller.calculate(absoluteEncoder.getDistance());
     // use the newly updated setpoint to calculate a feedforward.
     var setpoint = controller.getSetpoint();
-    var feedforwardOutput = feedforward.calculate(setpoint.position, setpoint.velocity);
+    var feedforwardOutput = feedforward.calculate(getPosition(), setpoint.velocity);
 
     var totalOutputVolts = feedbackOutput + feedforwardOutput;
     setVoltage(totalOutputVolts);
@@ -108,5 +153,20 @@ public class Arm extends SubsystemBase {
             })
         .andThen(holdPositionCommand())
         .until(this::atGoal);
+  }
+
+  public CommandBase continuousGoalCommand(DoubleSupplier goalSupplier) {
+    return run(
+        () -> {
+          updatePositionController(goalSupplier.getAsDouble());
+        });
+  }
+
+  @Override
+  public void periodic() {
+    if (!DriverStation.isEnabled()) {
+      controller.reset(absoluteEncoder.getDistance());
+    }
+    m_arm.setAngle(Units.radiansToDegrees(absoluteEncoder.getDistance()));
   }
 }

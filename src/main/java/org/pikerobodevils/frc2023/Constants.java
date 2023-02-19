@@ -15,6 +15,8 @@ import edu.wpi.first.math.util.Units;
  * globally (i.e. public static). Do not put anything functional in this class.
  */
 public final class Constants {
+  public static final boolean LOG_IN_SIM = false;
+
   public static class DrivetrainConstants {
     public static final int LEFT_LEADER_ID = 1;
     public static final int LEFT_FOLLOWER_ONE_ID = 3;
@@ -48,22 +50,29 @@ public final class Constants {
     public static final double RAD_PER_QUAD_TICK = RAD_PER_ENCODER_ROTATION / QUAD_COUNTS_PER_REV;
 
     public static final double OFFSET_DEGREES = 0;
-    public static final double ENCODER_OFFSET =
-        Units.degreesToRadians(OFFSET_DEGREES) / RAD_PER_ENCODER_ROTATION;
+    public static final double ENCODER_OFFSET = Units.degreesToRadians(OFFSET_DEGREES);
 
-    public static final double KP = 0;
+    public static final double KP = 5;
     public static final double KI = 0;
-    public static final double KD = 0;
+    public static final double KD = 1;
 
     public static final double KS = 0;
-    public static final double KG = 0;
-    public static final double KA = 0;
-    public static final double KV = 0;
+    public static final double KG = 1.3;
+    public static final double KV = 2.22;
+    public static final double KA = 0.04;
 
-    public static final double MAX_VELO = Math.PI;
+    public static final double MAX_VELO = Math.PI * 2;
     // Rad / s / s
-    public static final double MAX_ACCEL = Math.PI * 4;
+    public static final double MAX_ACCEL = Math.PI * 8;
     public static final TrapezoidProfile.Constraints CONSTRAINTS =
         new TrapezoidProfile.Constraints(MAX_VELO, MAX_ACCEL);
+
+    // The reduction between the motors and the arm.
+    public static final double ARM_REDUCTION = 5 * 5 * (64.0 / 14);
+
+    public static final double COM_DISTANCE = Units.inchesToMeters(25);
+    public static final double MASS = Units.lbsToKilograms(15);
+
+    public static final double MOI_KG_M_SQUARED = MASS * (Math.pow(COM_DISTANCE, 2));
   }
 }

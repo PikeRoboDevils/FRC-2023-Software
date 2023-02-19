@@ -5,9 +5,13 @@
 
 package org.pikerobodevils.frc2023;
 
+import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import io.github.oblarg.oblog.Logger;
 
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
@@ -16,12 +20,23 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotInit() {
+    if (isSimulation()) {
+      DriverStation.silenceJoystickConnectionWarning(true);
+    }
+
     m_robotContainer = new RobotContainer();
+    if (isReal()) {
+      DataLogManager.start();
+    } else if (Constants.LOG_IN_SIM) {
+      DataLogManager.start(
+          Filesystem.getOperatingDirectory().toPath().resolve("sim_logs").toString());
+    }
   }
 
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
+    Logger.updateEntries();
   }
 
   @Override
@@ -64,5 +79,7 @@ public class Robot extends TimedRobot {
   public void simulationInit() {}
 
   @Override
-  public void simulationPeriodic() {}
+  public void simulationPeriodic() {
+    m_robotContainer.simulationPeriodic();
+  }
 }
