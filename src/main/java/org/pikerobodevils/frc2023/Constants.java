@@ -6,6 +6,8 @@
 package org.pikerobodevils.frc2023;
 
 import com.revrobotics.CANSparkMax.IdleMode;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.util.Units;
 
 /**
  * The Constants class provides a convenient place to hold robot-wide numerical or boolean
@@ -27,5 +29,41 @@ public final class Constants {
   public static class ControlBoardConstants {
     public static final int DRIVER_PORT = 0;
     public static final int OPERATOR_PORT = 1;
+  }
+
+  public static class ArmConstants {
+    public static final int LEFT_CONTROLLER_ID = 7;
+    public static final int RIGHT_CONTROLLER_ID = 8;
+
+    public static final int ENCODER_QUAD_A = 5;
+    public static final int ENCODER_QUAD_B = 6;
+    public static final int ENCODER_ABS_DIO = 7;
+
+    public static final double QUAD_COUNTS_PER_REV = 4096;
+
+    // Encoder pulley teeth / arm pulley teeth;
+    public static final double ARM_TO_ENCODER_RATIO = 1;
+
+    public static final double RAD_PER_ENCODER_ROTATION = 2 * Math.PI * ARM_TO_ENCODER_RATIO;
+    public static final double RAD_PER_QUAD_TICK = RAD_PER_ENCODER_ROTATION / QUAD_COUNTS_PER_REV;
+
+    public static final double OFFSET_DEGREES = 0;
+    public static final double ENCODER_OFFSET =
+        Units.degreesToRadians(OFFSET_DEGREES) / RAD_PER_ENCODER_ROTATION;
+
+    public static final double KP = 0;
+    public static final double KI = 0;
+    public static final double KD = 0;
+
+    public static final double KS = 0;
+    public static final double KG = 0;
+    public static final double KA = 0;
+    public static final double KV = 0;
+
+    public static final double MAX_VELO = Math.PI;
+    // Rad / s / s
+    public static final double MAX_ACCEL = Math.PI * 4;
+    public static final TrapezoidProfile.Constraints CONSTRAINTS =
+        new TrapezoidProfile.Constraints(MAX_VELO, MAX_ACCEL);
   }
 }
