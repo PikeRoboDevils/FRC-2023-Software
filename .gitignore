@@ -369,3 +369,4 @@ bin/
 *-window.json
 
 .idea/
+.run/

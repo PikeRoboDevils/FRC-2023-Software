@@ -25,9 +25,7 @@ public final class Constants {
   }
 
   public static class ControlBoardConstants {
-    public static final int LEFT_STICK = 0;
-    public static final int RIGHT_STICK = 1;
-
-    public static final int XBOX_PORT = 5;
+    public static final int DRIVER_PORT = 0;
+    public static final int OPERATOR_PORT = 1;
   }
 }
