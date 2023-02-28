@@ -5,13 +5,15 @@
 
 package org.pikerobodevils.frc2023;
 
+import static org.pikerobodevils.frc2023.Constants.ControlBoardConstants.*;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
 public class ControlBoard {
-  public final CommandXboxController driver = new CommandXboxController(0);
+  public final CommandXboxController driver = new CommandXboxController(DRIVER_PORT);
 
-  public final CommandXboxController operator = new CommandXboxController(1);
+  public final CommandXboxController operator = new CommandXboxController(OPERATOR_PORT);
 
   public double getSpeed() {
     double leftY = -driver.getLeftY();
