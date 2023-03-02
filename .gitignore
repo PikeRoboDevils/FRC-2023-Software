@@ -370,3 +370,5 @@ bin/
 
 .idea/
 .run/
+
+sim_logs/

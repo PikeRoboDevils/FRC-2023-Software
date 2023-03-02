@@ -1,5 +1,12 @@
 {
   "HALProvider": {
+    "Encoders": {
+      "0": {
+        "header": {
+          "open": true
+        }
+      }
+    },
     "Other Devices": {
       "SPARK MAX [7]": {
         "header": {
@@ -16,10 +23,11 @@
   "NTProvider": {
     "types": {
       "/FMSInfo": "FMSInfo",
+      "/Shuffleboard/Arm/Arm Simulation": "Mechanism2d",
       "/SmartDashboard/ArmSim": "Mechanism2d"
     },
     "windows": {
-      "/SmartDashboard/ArmSim": {
+      "/Shuffleboard/Arm/Arm Simulation": {
         "window": {
           "visible": true
         }

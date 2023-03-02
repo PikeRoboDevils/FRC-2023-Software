@@ -2,6 +2,7 @@ plugins {
   id "java"
   id "edu.wpi.first.GradleRIO" version "2023.4.2"
   id 'com.diffplug.spotless' version '6.12.0'
+  id 'org.ajoberstar.grgit' version '5.0.0'
 }
 
 sourceCompatibility = JavaVersion.VERSION_11
@@ -94,6 +95,21 @@ wpi.sim.addDriverstation()
 jar {
   from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
   manifest edu.wpi.first.gradlerio.GradleRIOPlugin.javaManifest(ROBOT_MAIN_CLASS)
+  manifest {
+    attributes(
+        "Built-By": System.getProperty("user.name"),
+        "Build-Time-ISO-8601": new Date().format("yyyy-MM-dd'T'HH:mm:ss"),
+        "OS-Arch": System.getProperty("os.arch"),
+        "OS-Name": System.getProperty("os.name"),
+        "OS-Version": System.getProperty("os.version"),
+        "JDK-Vendor": System.getProperty("java.vendor"),
+        "JDK-Version": System.getProperty("java.version"),
+        "Git-Hash": grgit.head().abbreviatedId,
+        "Git-Author": grgit.head().author.name,
+        "Git-Description": grgit.head().shortMessage,
+        "Git-Status": grgit.status().isClean() ? "clean" : "dirty"
+        )
+  }
   duplicatesStrategy = DuplicatesStrategy.INCLUDE
 }
 
