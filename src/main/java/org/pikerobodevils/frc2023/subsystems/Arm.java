@@ -17,7 +17,6 @@ import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -51,7 +50,9 @@ public class Arm extends SubsystemBase implements Loggable {
   ArmFeedforward feedforward = new ArmFeedforward(KS, KG, KV, KA);
   ProfiledPIDController controller = new ProfiledPIDController(KP, KI, KD, CONSTRAINTS);
 
+  @Log(name = "Arm Simulation")
   private final Mechanism2d m_mech2d = new Mechanism2d(60, 60);
+
   private final MechanismRoot2d m_armPivot = m_mech2d.getRoot("ArmPivot", 30, 30);
   private final MechanismLigament2d m_armTower =
       m_armPivot.append(new MechanismLigament2d("ArmTower", 30, -90));
@@ -70,7 +71,6 @@ public class Arm extends SubsystemBase implements Loggable {
     controller.setGoal(getPosition());
 
     m_armTower.setColor(new Color8Bit(Color.kBlue));
-    SmartDashboard.putData("ArmSim", m_mech2d);
   }
 
   /**
@@ -85,7 +85,11 @@ public class Arm extends SubsystemBase implements Loggable {
 
   @Log(name = "Voltage")
   public double getVoltage() {
-    return leftController.getAppliedOutput() * leftController.getBusVoltage();
+    if (RobotBase.isReal()) {
+      return leftController.getAppliedOutput() * leftController.getBusVoltage();
+    } else {
+      return leftController.getAppliedOutput();
+    }
   }
 
   @Log(name = "Left Current")
