@@ -28,6 +28,4 @@ public class Extension extends SubsystemBase {
     upper.set(DoubleSolenoid.Value.kReverse);
     lower.set(DoubleSolenoid.Value.kReverse);
   }
-
-
 }

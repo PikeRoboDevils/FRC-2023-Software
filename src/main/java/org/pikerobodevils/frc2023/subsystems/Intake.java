@@ -10,8 +10,9 @@ import static org.pikerobodevils.frc2023.Constants.IntakeConstants.*;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import io.github.oblarg.oblog.Loggable;
 
-public class Intake extends SubsystemBase {
+public class Intake extends SubsystemBase implements Loggable {
   DoubleSolenoid intakeCylinders =
       new DoubleSolenoid(PneumaticsModuleType.REVPH, FORWARD_CHANNEL, REVERSE_CHANNEL);
 

@@ -12,9 +12,10 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import io.github.oblarg.oblog.Loggable;
 import java.util.function.DoubleSupplier;
 
-public class Drivetrain extends SubsystemBase {
+public class Drivetrain extends SubsystemBase implements Loggable {
 
   private final CANSparkMax leftLeader = new CANSparkMax(LEFT_LEADER_ID, MotorType.kBrushless);
   private final CANSparkMax leftFollowerOne =
