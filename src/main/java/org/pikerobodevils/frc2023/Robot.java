@@ -20,13 +20,8 @@ public class Robot extends TimedRobot {
 
   private RobotContainer m_robotContainer;
 
-  // VXC8701
-  private Compressor compressor = new Compressor(PneumaticsModuleType.REVPH);
-
   @Override
   public void robotInit() {
-    compressor.enableAnalog(100, 120);
-
     m_robotContainer = new RobotContainer();
 
     if (isReal()) {

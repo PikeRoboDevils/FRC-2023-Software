@@ -10,10 +10,7 @@ import static edu.wpi.first.wpilibj2.command.Commands.print;
 import edu.wpi.first.wpilibj2.command.Command;
 import io.github.oblarg.oblog.Logger;
 import org.pikerobodevils.frc2023.simulation.ArmSim;
-import org.pikerobodevils.frc2023.subsystems.Arm;
-import org.pikerobodevils.frc2023.subsystems.Drivetrain;
-import org.pikerobodevils.frc2023.subsystems.Extension;
-import org.pikerobodevils.frc2023.subsystems.Intake;
+import org.pikerobodevils.frc2023.subsystems.*;
 
 public class RobotContainer {
   public final Drivetrain drivetrain = new Drivetrain();
@@ -24,6 +21,8 @@ public class RobotContainer {
   public final Extension extension = new Extension();
   public final ControlBoard controlboard = new ControlBoard();
   private final ArmSim armSim = new ArmSim(arm);
+
+  private final Pneumatics pneumatics = new Pneumatics();
 
   public RobotContainer() {
     /**
