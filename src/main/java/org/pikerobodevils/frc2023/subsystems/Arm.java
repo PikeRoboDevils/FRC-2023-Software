@@ -9,6 +9,7 @@ import static org.pikerobodevils.frc2023.Constants.ArmConstants.*;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.util.Units;
@@ -27,13 +28,25 @@ import java.util.function.DoubleSupplier;
 
 public class Arm extends SubsystemBase implements Loggable {
 
+  public enum ArmPosition {
+    STOW(-80),
+    PICKUP(0),
+    SCORE(7),
+    FLOOR_PICKUP(-66);
+
+    ArmPosition(double angleDegrees) {
+      this.valueRadians = Units.degreesToRadians(angleDegrees);
+    }
+
+    public final double valueRadians;
+  }
+
   CANSparkMax leftController =
       new CANSparkMax(LEFT_CONTROLLER_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
   CANSparkMax rightController =
       new CANSparkMax(RIGHT_CONTROLLER_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
 
-  Encoder encoder =
-      new Encoder(ENCODER_QUAD_A, ENCODER_QUAD_B, false, CounterBase.EncodingType.k4X);
+  Encoder encoder = new Encoder(ENCODER_QUAD_A, ENCODER_QUAD_B, true, CounterBase.EncodingType.k4X);
   DutyCycleEncoder absoluteEncoder = new DutyCycleEncoder(ENCODER_ABS_DIO);
   ArmFeedforward feedforward = new ArmFeedforward(KS, KG, KV, KA);
   ProfiledPIDController controller = new ProfiledPIDController(KP, KI, KD, CONSTRAINTS);
@@ -46,13 +59,15 @@ public class Arm extends SubsystemBase implements Loggable {
       m_armPivot.append(new MechanismLigament2d("Arm", 30, 0, 6, new Color8Bit(Color.kYellow)));
 
   public Arm() {
+    rightController.setInverted(true);
     encoder.setDistancePerPulse(RAD_PER_QUAD_TICK);
     absoluteEncoder.setDistancePerRotation(RAD_PER_ENCODER_ROTATION);
     absoluteEncoder.setPositionOffset(ENCODER_OFFSET);
 
     setDefaultCommand(holdPositionCommand());
 
-    controller.reset(absoluteEncoder.getDistance());
+    controller.reset(getPosition());
+    controller.setGoal(getPosition());
 
     m_armTower.setColor(new Color8Bit(Color.kBlue));
     SmartDashboard.putData("ArmSim", m_mech2d);
@@ -70,16 +85,31 @@ public class Arm extends SubsystemBase implements Loggable {
 
   @Log(name = "Voltage")
   public double getVoltage() {
-    return leftController.getAppliedOutput();
+    return leftController.getAppliedOutput() * leftController.getBusVoltage();
+  }
+
+  @Log(name = "Left Current")
+  public double getLeftCurrent() {
+    return leftController.getOutputCurrent();
+  }
+
+  @Log(name = "Right Current")
+  public double getRightCurrent() {
+    return rightController.getOutputCurrent();
   }
 
   public double getPosition() {
-    return absoluteEncoder.getDistance();
+    return MathUtil.angleModulus(absoluteEncoder.getDistance());
   }
 
   @Log(name = "Position")
   public double getPositionDeg() {
     return Units.radiansToDegrees(getPosition());
+  }
+
+  @Log
+  public double getQuadPositionDeg() {
+    return Units.radiansToDegrees(encoder.getDistance());
   }
 
   /**
@@ -133,7 +163,7 @@ public class Arm extends SubsystemBase implements Loggable {
   public void updatePositionController() {
     // Update controller with new measurement
     // This updates the controllers setpoint internally.
-    var feedbackOutput = controller.calculate(absoluteEncoder.getDistance());
+    var feedbackOutput = controller.calculate(getPosition());
     // use the newly updated setpoint to calculate a feedforward.
     var setpoint = controller.getSetpoint();
     var feedforwardOutput = feedforward.calculate(getPosition(), setpoint.velocity);
@@ -165,8 +195,8 @@ public class Arm extends SubsystemBase implements Loggable {
   @Override
   public void periodic() {
     if (!DriverStation.isEnabled()) {
-      controller.reset(absoluteEncoder.getDistance());
+      controller.reset(getPosition());
     }
-    m_arm.setAngle(Units.radiansToDegrees(absoluteEncoder.getDistance()));
+    m_arm.setAngle(Units.radiansToDegrees(getPosition()));
   }
 }

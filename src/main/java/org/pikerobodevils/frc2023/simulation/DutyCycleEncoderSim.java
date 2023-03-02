@@ -57,6 +57,8 @@ public class DutyCycleEncoderSim {
   }
 
   public void setDistancePerRotation(double distancePerRotation) {
-    m_simDistancePerRotation.set(distancePerRotation);
+    if (m_simDistancePerRotation != null) {
+      m_simDistancePerRotation.set(distancePerRotation);
+    }
   }
 }

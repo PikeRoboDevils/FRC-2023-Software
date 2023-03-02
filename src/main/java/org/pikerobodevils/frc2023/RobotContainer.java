@@ -7,22 +7,29 @@ package org.pikerobodevils.frc2023;
 
 import static edu.wpi.first.wpilibj2.command.Commands.print;
 
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import io.github.oblarg.oblog.Logger;
 import org.pikerobodevils.frc2023.simulation.ArmSim;
 import org.pikerobodevils.frc2023.subsystems.Arm;
 import org.pikerobodevils.frc2023.subsystems.Drivetrain;
+import org.pikerobodevils.frc2023.subsystems.Extension;
+import org.pikerobodevils.frc2023.subsystems.Intake;
 
 public class RobotContainer {
   public final Drivetrain drivetrain = new Drivetrain();
   public final Arm arm = new Arm();
-  public final ControlBoard controlboard = new ControlBoard();
 
+  public final Intake intake = new Intake();
+
+  public final Extension extension = new Extension();
+  public final ControlBoard controlboard = new ControlBoard();
   private final ArmSim armSim = new ArmSim(arm);
 
   public RobotContainer() {
-
+    /**
+     * arm.setDefaultCommand(arm.run(() -> { arm.setVoltage(-controlboard.operator.getLeftY() * 6);
+     * }));
+     */
     drivetrain.setDefaultCommand(
         drivetrain.arcadeDriveCommand(controlboard::getSpeed, controlboard::getTurn));
 
@@ -35,10 +42,18 @@ public class RobotContainer {
   }
 
   private void configureBindings() {
-    controlboard.operator.a().onTrue(arm.setGoalCommand(Units.degreesToRadians(-70)));
-    controlboard.operator.b().onTrue(arm.setGoalCommand(Units.degreesToRadians(0)));
-    controlboard.operator.x().onTrue(arm.setGoalCommand(Units.degreesToRadians(45)));
-    controlboard.operator.y().onTrue(arm.setGoalCommand(Units.degreesToRadians(-15)));
+    controlboard.operator.a().onTrue(arm.setGoalCommand(Arm.ArmPosition.STOW.valueRadians));
+    controlboard.operator.b().onTrue(arm.setGoalCommand(Arm.ArmPosition.PICKUP.valueRadians));
+    controlboard.operator.x().onTrue(arm.setGoalCommand(Arm.ArmPosition.FLOOR_PICKUP.valueRadians));
+    controlboard.operator.y().onTrue(arm.setGoalCommand(Arm.ArmPosition.SCORE.valueRadians));
+
+    controlboard.operator.leftBumper().onTrue(extension.runOnce(extension::extend));
+    controlboard.operator.rightBumper().onTrue(extension.runOnce(extension::retract));
+
+    /**
+     * controlboard.operator.x().onTrue(intake.runOnce(intake::setOpen));
+     * controlboard.operator.y().onTrue(intake.runOnce(intake::setClose));*
+     */
   }
 
   public void simulationPeriodic() {

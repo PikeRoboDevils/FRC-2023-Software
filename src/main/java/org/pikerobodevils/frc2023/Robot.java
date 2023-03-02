@@ -5,10 +5,8 @@
 
 package org.pikerobodevils.frc2023;
 
-import edu.wpi.first.wpilibj.DataLogManager;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Filesystem;
-import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.*;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import io.github.oblarg.oblog.Logger;
@@ -18,15 +16,18 @@ public class Robot extends TimedRobot {
 
   private RobotContainer m_robotContainer;
 
+  // VXC8701
+  private Compressor compressor = new Compressor(PneumaticsModuleType.REVPH);
+
   @Override
   public void robotInit() {
-    if (isSimulation()) {
-      DriverStation.silenceJoystickConnectionWarning(true);
-    }
+    compressor.enableAnalog(100, 120);
+    //compressor.disable();
+    DriverStation.silenceJoystickConnectionWarning(true);
 
     m_robotContainer = new RobotContainer();
     if (isReal()) {
-      DataLogManager.start();
+      // DataLogManager.start();
     } else if (Constants.LOG_IN_SIM) {
       DataLogManager.start(
           Filesystem.getOperatingDirectory().toPath().resolve("sim_logs").toString());
@@ -35,6 +36,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotPeriodic() {
+    SmartDashboard.putNumber("Pressure", compressor.getPressure());
     CommandScheduler.getInstance().run();
     Logger.updateEntries();
   }

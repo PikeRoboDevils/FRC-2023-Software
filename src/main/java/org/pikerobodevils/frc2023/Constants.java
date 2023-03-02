@@ -37,11 +37,11 @@ public final class Constants {
     public static final int LEFT_CONTROLLER_ID = 7;
     public static final int RIGHT_CONTROLLER_ID = 8;
 
+    public static final int ENCODER_ABS_DIO = 4;
     public static final int ENCODER_QUAD_A = 5;
     public static final int ENCODER_QUAD_B = 6;
-    public static final int ENCODER_ABS_DIO = 7;
 
-    public static final double QUAD_COUNTS_PER_REV = 4096;
+    public static final double QUAD_COUNTS_PER_REV = 2048;
 
     // Encoder pulley teeth / arm pulley teeth;
     public static final double ARM_TO_ENCODER_RATIO = 1;
@@ -49,21 +49,29 @@ public final class Constants {
     public static final double RAD_PER_ENCODER_ROTATION = 2 * Math.PI * ARM_TO_ENCODER_RATIO;
     public static final double RAD_PER_QUAD_TICK = RAD_PER_ENCODER_ROTATION / QUAD_COUNTS_PER_REV;
 
-    public static final double OFFSET_DEGREES = 0;
-    public static final double ENCODER_OFFSET = Units.degreesToRadians(OFFSET_DEGREES);
+    public static final double OFFSET_DEGREES = 38.6;
+    public static final double ENCODER_OFFSET =
+        Units.degreesToRadians(OFFSET_DEGREES) / RAD_PER_ENCODER_ROTATION;
 
-    public static final double KP = 5;
+    public static final double KP = 5.2103;
     public static final double KI = 0;
-    public static final double KD = 1;
+    public static final double KD = 1.2;
 
-    public static final double KS = 0;
-    public static final double KG = 1.3;
-    public static final double KV = 2.22;
-    public static final double KA = 0.04;
+    public static final double KS = 0.21532;
+    public static final double KG = 0.68204;
+    public static final double KV = 2.1895;
+    public static final double KA = 0.094636;
 
-    public static final double MAX_VELO = Math.PI * 2;
+    /**
+     * SIM GAINS public static final double KP = 5; public static final double KI = 0; public static
+     * final double KD = 1;
+     *
+     * <p>public static final double KS = 0; public static final double KG = 1.3; public static
+     * final double KV = 2.22; public static final double KA = 0.04;
+     */
+    public static final double MAX_VELO = Math.PI;
     // Rad / s / s
-    public static final double MAX_ACCEL = Math.PI * 8;
+    public static final double MAX_ACCEL = Math.PI * 4;
     public static final TrapezoidProfile.Constraints CONSTRAINTS =
         new TrapezoidProfile.Constraints(MAX_VELO, MAX_ACCEL);
 
@@ -74,5 +82,17 @@ public final class Constants {
     public static final double MASS = Units.lbsToKilograms(15);
 
     public static final double MOI_KG_M_SQUARED = MASS * (Math.pow(COM_DISTANCE, 2));
+  }
+
+  public static class IntakeConstants {
+    public static final int FORWARD_CHANNEL = 0;
+    public static final int REVERSE_CHANNEL = 1;
+  }
+
+  public static class ExtensionConstants {
+    public static final int UPPER_FORWARD = 2;
+    public static final int UPPER_REVERSE = 3;
+    public static final int LOWER_FORWARD = 4;
+    public static final int LOWER_REVERSE = 5;
   }
 }
