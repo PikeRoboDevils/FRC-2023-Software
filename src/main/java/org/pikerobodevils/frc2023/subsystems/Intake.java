@@ -114,7 +114,7 @@ public class Intake extends SubsystemBase implements Loggable {
   }
 
   public CommandBase ejectCubeCommand(double speed) {
-    return runEnd(() -> setRollers(speed), this::stop).withTimeout(1);
+    return runEnd(() -> setRollers(speed), this::stop).withTimeout(.5);
   }
 
   @Override

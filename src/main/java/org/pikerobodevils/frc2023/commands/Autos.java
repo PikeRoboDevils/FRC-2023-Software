@@ -23,7 +23,7 @@ public final class Autos {
             () -> {
               drivetrain.setLeftRightVoltage(-3, -3);
             })
-        .withTimeout(4);
+        .withTimeout(3);
   }
 
   public CommandBase scoreMidCubeDriveBack() {
