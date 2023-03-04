@@ -21,16 +21,19 @@ public final class Autos {
     return drivetrain
         .run(
             () -> {
-              drivetrain.setLeftRight(-.2, -.2);
+              drivetrain.setLeftRightVoltage(-3, -3);
             })
         .withTimeout(4);
   }
 
   public CommandBase scoreMidCubeDriveBack() {
+    return scoreMidCube().andThen(driveBackAuto());
+  }
+
+  public CommandBase scoreMidCube() {
     return superstructure
         .scoreMidPosition()
         .andThen(superstructure.score())
-        .andThen(superstructure.stowCommand())
-        .andThen(driveBackAuto());
+        .andThen(superstructure.stowCommand());
   }
 }

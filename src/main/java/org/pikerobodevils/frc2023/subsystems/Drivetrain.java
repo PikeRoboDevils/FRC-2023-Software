@@ -72,6 +72,21 @@ public class Drivetrain extends SubsystemBase implements Loggable {
     rightLeader.set(right);
   }
 
+  public void setLeftRightVoltage(double left, double right) {
+    leftLeader.setVoltage(left);
+    rightLeader.setVoltage(right);
+  }
+
+  public void setIdleMode(CANSparkMax.IdleMode mode) {
+    leftLeader.setIdleMode(mode);
+    leftFollowerOne.setIdleMode(mode);
+    leftFollowerTwo.setIdleMode(mode);
+
+    rightLeader.setIdleMode(mode);
+    rightFollowerOne.setIdleMode(mode);
+    rightFollowerTwo.setIdleMode(mode);
+  }
+
   public void arcadeDrive(double speed, double rotation) {
     DifferentialDrive.WheelSpeeds speeds = DifferentialDrive.arcadeDriveIK(speed, rotation, false);
     setLeftRight(speeds.left, speeds.right);

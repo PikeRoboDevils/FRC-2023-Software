@@ -5,11 +5,14 @@
 
 package org.pikerobodevils.frc2023;
 
-import static edu.wpi.first.wpilibj2.command.Commands.print;
-
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Commands;
 import io.github.oblarg.oblog.Logger;
+import org.pikerobodevils.frc2023.commands.Autos;
 import org.pikerobodevils.frc2023.commands.Superstructure;
 import org.pikerobodevils.frc2023.simulation.ArmSim;
 import org.pikerobodevils.frc2023.subsystems.*;
@@ -28,6 +31,10 @@ public class RobotContainer {
 
   private final Pneumatics pneumatics = new Pneumatics();
 
+  Autos autos = new Autos(drivetrain, superstructure);
+  private final ShuffleboardTab driverTab = Shuffleboard.getTab("Driver Dashboard");
+  SendableChooser<CommandBase> autoChooser = new SendableChooser<>();
+
   public RobotContainer() {
     /**
      * arm.setDefaultCommand(arm.run(() -> { arm.setVoltage(-controlboard.operator.getLeftY() * 6);
@@ -42,6 +49,13 @@ public class RobotContainer {
     }));*/
     configureBindings();
     Logger.configureLoggingAndConfig(this, false);
+
+    autoChooser.setDefaultOption("No auto", Commands.none());
+    autoChooser.addOption("Drive Back", autos.driveBackAuto());
+    autoChooser.addOption("Mid cube drive back", autos.scoreMidCubeDriveBack());
+    autoChooser.addOption("Score mid cube only", autos.scoreMidCube());
+
+    driverTab.add("Auto", autoChooser).withSize(2, 1);
   }
 
   private void configureBindings() {
@@ -85,6 +99,6 @@ public class RobotContainer {
   }
 
   public Command getAutonomousCommand() {
-    return print("No autonomous command configured");
+    return autoChooser.getSelected();
   }
 }

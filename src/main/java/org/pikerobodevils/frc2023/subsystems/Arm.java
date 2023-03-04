@@ -64,7 +64,17 @@ public class Arm extends SubsystemBase implements Loggable {
       m_armPivot.append(new MechanismLigament2d("Arm", 30, 0, 6, new Color8Bit(Color.kYellow)));
 
   public Arm() {
+    rightController.restoreFactoryDefaults();
     rightController.setInverted(true);
+    rightController.setIdleMode(CANSparkMax.IdleMode.kBrake);
+    rightController.burnFlash();
+    Timer.delay(0.1);
+
+    leftController.restoreFactoryDefaults();
+    leftController.setIdleMode(CANSparkMax.IdleMode.kBrake);
+    leftController.burnFlash();
+    Timer.delay(0.1);
+
     encoder.setDistancePerPulse(RAD_PER_QUAD_TICK);
     absoluteEncoder.setDistancePerRotation(RAD_PER_ENCODER_ROTATION);
     absoluteEncoder.setPositionOffset(ENCODER_OFFSET);
