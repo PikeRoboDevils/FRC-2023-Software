@@ -5,8 +5,32 @@
 
 package org.pikerobodevils.frc2023.commands;
 
+import edu.wpi.first.wpilibj2.command.CommandBase;
+import org.pikerobodevils.frc2023.subsystems.Drivetrain;
+
 public final class Autos {
-  private Autos() {
-    throw new UnsupportedOperationException("This is a utility class!");
+  Drivetrain drivetrain;
+  Superstructure superstructure;
+
+  public Autos(Drivetrain drivetrain, Superstructure superstructure) {
+    this.drivetrain = drivetrain;
+    this.superstructure = superstructure;
+  }
+
+  public CommandBase driveBackAuto() {
+    return drivetrain
+        .run(
+            () -> {
+              drivetrain.setLeftRight(-.2, -.2);
+            })
+        .withTimeout(4);
+  }
+
+  public CommandBase scoreMidCubeDriveBack() {
+    return superstructure
+        .scoreMidPosition()
+        .andThen(superstructure.score())
+        .andThen(superstructure.stowCommand())
+        .andThen(driveBackAuto());
   }
 }
