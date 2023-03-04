@@ -29,8 +29,12 @@ public class Arm extends SubsystemBase implements Loggable {
 
   public enum ArmPosition {
     STOW(-80),
-    PICKUP(0),
-    SCORE(7),
+    SUBSTATION_PICKUP(-8),
+    SCORE_CONE_LOW(-36),
+    SCORE_CONE_MID(-3),
+    SCORE_CUBE_LOW(-60),
+    SCORE_CUBE_MID(-26),
+    SCORE_CUBE_HIGH(-8),
     FLOOR_PICKUP(-66);
 
     ArmPosition(double angleDegrees) {
@@ -68,7 +72,7 @@ public class Arm extends SubsystemBase implements Loggable {
     setDefaultCommand(holdPositionCommand());
 
     controller.reset(getPosition());
-    controller.setGoal(getPosition());
+    setGoal(ArmPosition.STOW.valueRadians);
 
     m_armTower.setColor(new Color8Bit(Color.kBlue));
   }
@@ -184,6 +188,15 @@ public class Arm extends SubsystemBase implements Loggable {
     return runOnce(
             () -> {
               setGoal(goalPosition);
+            })
+        .andThen(holdPositionCommand())
+        .until(this::atGoal);
+  }
+
+  public CommandBase setGoalCommand(ArmPosition goalPosition) {
+    return runOnce(
+            () -> {
+              setGoal(goalPosition.valueRadians);
             })
         .andThen(holdPositionCommand())
         .until(this::atGoal);

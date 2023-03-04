@@ -26,6 +26,8 @@ public final class Constants {
     public static final int RIGHT_FOLLOWER_TWO_ID = 6;
 
     public static final IdleMode IDLE_MODE = IdleMode.kCoast;
+
+    public static final int CURRENT_LIMIT = 50;
   }
 
   public static class ControlBoardConstants {
@@ -53,7 +55,7 @@ public final class Constants {
     public static final double ENCODER_OFFSET =
         Units.degreesToRadians(OFFSET_DEGREES) / RAD_PER_ENCODER_ROTATION;
 
-    public static final double KP = 5.2103;
+    public static final double KP = 5.5; // 5.2103;
     public static final double KI = 0;
     public static final double KD = 1.2;
 
@@ -87,6 +89,18 @@ public final class Constants {
   public static class IntakeConstants {
     public static final int FORWARD_CHANNEL = 0;
     public static final int REVERSE_CHANNEL = 1;
+
+    public static final int LEFT_ID = 9;
+    public static final int RIGHT_ID = 10;
+
+    public static final int CURRENT_LIMIT = 20; // Amps
+
+    public static final double INTAKE_CUBE_SPEED = -.75;
+
+    public static final double HOLD_CUBE_SPEED = -0.05;
+
+    public static final double SHOOT_CUBE_SPEED = .75;
+    public static final double INTAKE_STALL_DETECTION = 15; // Amps
   }
 
   public static class ExtensionConstants {

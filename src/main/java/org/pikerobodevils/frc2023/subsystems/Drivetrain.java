@@ -33,31 +33,37 @@ public class Drivetrain extends SubsystemBase implements Loggable {
   public Drivetrain() {
     leftLeader.restoreFactoryDefaults();
     leftLeader.setIdleMode(IDLE_MODE);
+    leftLeader.setSmartCurrentLimit(40);
     leftLeader.burnFlash();
 
     leftFollowerOne.restoreFactoryDefaults();
     leftFollowerOne.setIdleMode(IDLE_MODE);
     leftFollowerOne.follow(leftLeader);
+    leftFollowerTwo.setSmartCurrentLimit(CURRENT_LIMIT);
     leftFollowerOne.burnFlash();
 
     leftFollowerTwo.restoreFactoryDefaults();
     leftFollowerTwo.setIdleMode(IDLE_MODE);
     leftFollowerTwo.follow(leftLeader);
+    leftFollowerTwo.setSmartCurrentLimit(CURRENT_LIMIT);
     leftFollowerTwo.burnFlash();
 
     rightLeader.restoreFactoryDefaults();
     rightLeader.setIdleMode(IDLE_MODE);
     rightLeader.setInverted(true);
+    rightLeader.setSmartCurrentLimit(CURRENT_LIMIT);
     rightLeader.burnFlash();
 
     rightFollowerOne.restoreFactoryDefaults();
     rightFollowerOne.setIdleMode(IDLE_MODE);
     rightFollowerOne.follow(rightLeader);
+    rightFollowerTwo.setSmartCurrentLimit(CURRENT_LIMIT);
     rightFollowerOne.burnFlash();
 
     rightFollowerTwo.restoreFactoryDefaults();
     rightFollowerTwo.setIdleMode(IDLE_MODE);
     rightFollowerTwo.follow(rightLeader);
+    rightFollowerTwo.setSmartCurrentLimit(CURRENT_LIMIT);
     rightFollowerTwo.burnFlash();
   }
 
@@ -74,6 +80,19 @@ public class Drivetrain extends SubsystemBase implements Loggable {
   public CommandBase arcadeDriveCommand(DoubleSupplier speed, DoubleSupplier rotation) {
     return run(() -> arcadeDrive(speed.getAsDouble(), rotation.getAsDouble()));
   }
+
+  /*public CommandBase driveTrajectoryCommand(Trajectory trajectory) {
+    return driveTrajectoryCommand(() -> trajectory);
+  }*/
+
+  /*public CommandBase driveTrajectoryCommand(Supplier<Trajectory> trajectory) {
+    RamseteController ramsete = new RamseteController();
+    PIDController leftController = new PIDController(0,0,0);
+    PIDController rightController = new PIDController(0,0,0);
+    return run(() -> {
+
+    })
+  }*/
 
   @Override
   public void periodic() {

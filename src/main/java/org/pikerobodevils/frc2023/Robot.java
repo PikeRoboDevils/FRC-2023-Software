@@ -9,6 +9,7 @@ import static edu.wpi.first.wpilibj.DataLogManager.log;
 
 import com.revrobotics.CANSparkMax;
 import edu.wpi.first.wpilibj.*;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.WPILibVersion;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -22,6 +23,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotInit() {
+    SmartDashboard.putData(CommandScheduler.getInstance());
     m_robotContainer = new RobotContainer();
 
     if (isReal()) {
