@@ -109,7 +109,10 @@ public class Superstructure extends SubsystemBase implements Loggable {
               intake.open();
               intake.stop();
             }),
-        intake.ejectCubeCommand());
+        Commands.either(
+            intake.ejectCubeCommand(0.2),
+            intake.ejectCubeCommand(),
+            () -> arm.getGoalPosition() == Arm.ArmPosition.SCORE_CUBE_LOW.valueRadians));
   }
 
   public CommandBase stateCondition(Command onCone, Command onCube) {

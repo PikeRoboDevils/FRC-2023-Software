@@ -168,6 +168,10 @@ public class Arm extends SubsystemBase implements Loggable {
     return Units.radiansToDegrees(controller.getSetpoint().position);
   }
 
+  public double getGoalPosition() {
+    return controller.getGoal().position;
+  }
+
   @Log(name = "Setpoint Velocity")
   public double getSetpointVelocity() {
     return Units.radiansToDegrees(controller.getSetpoint().velocity);
