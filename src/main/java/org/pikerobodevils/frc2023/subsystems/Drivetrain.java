@@ -108,6 +108,15 @@ public class Drivetrain extends SubsystemBase implements Loggable {
 
     })
   }*/
+  public CommandBase setLeftRightVoltageCommand(double leftVoltage, double rightVoltage) {
+    return run(() -> {
+          setLeftRightVoltage(leftVoltage, rightVoltage);
+        })
+        .finallyDo(
+            (interrupted) -> {
+              setLeftRightVoltage(0, 0);
+            });
+  }
 
   @Override
   public void periodic() {

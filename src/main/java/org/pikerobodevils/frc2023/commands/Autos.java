@@ -18,16 +18,32 @@ public final class Autos {
   }
 
   public CommandBase driveBackAuto() {
-    return drivetrain
-        .run(
-            () -> {
-              drivetrain.setLeftRightVoltage(-3, -3);
-            })
-        .withTimeout(3);
+    return drivetrain.setLeftRightVoltageCommand(-3, -3).withTimeout(3.5);
   }
 
   public CommandBase scoreMidCubeDriveBack() {
-    return scoreMidCube().andThen(driveBackAuto());
+    return scoreMidCube().andThen(driveBackAuto().raceWith(superstructure.updateArmController()));
+  }
+
+  public CommandBase scoreHighCube() {
+    return superstructure
+        .scoreHighPosition()
+        .andThen(
+            drivetrain
+                .setLeftRightVoltageCommand(3, 3)
+                .withTimeout(.4)
+                .raceWith(superstructure.updateArmController()))
+        .andThen(superstructure.score())
+        .andThen(
+            drivetrain
+                .setLeftRightVoltageCommand(-3, -3)
+                .withTimeout(.4)
+                .raceWith(superstructure.updateArmController()))
+        .andThen(superstructure.stowCommand());
+  }
+
+  public CommandBase scoreHighCubeDriveBack() {
+    return scoreHighCube().andThen(driveBackAuto().raceWith(superstructure.updateArmController()));
   }
 
   public CommandBase scoreMidCube() {

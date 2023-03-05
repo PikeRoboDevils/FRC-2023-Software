@@ -24,7 +24,10 @@
     "types": {
       "/FMSInfo": "FMSInfo",
       "/Shuffleboard/Arm/Arm Simulation": "Mechanism2d",
-      "/SmartDashboard/ArmSim": "Mechanism2d"
+      "/Shuffleboard/Driver Dashboard/Auto": "String Chooser",
+      "/Shuffleboard/Superstructure/Arm/Arm Simulation": "Mechanism2d",
+      "/SmartDashboard/ArmSim": "Mechanism2d",
+      "/SmartDashboard/Scheduler": "Scheduler"
     },
     "windows": {
       "/Shuffleboard/Arm/Arm Simulation": {

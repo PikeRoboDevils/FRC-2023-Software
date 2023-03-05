@@ -5,6 +5,8 @@
 
 package org.pikerobodevils.frc2023;
 
+import com.revrobotics.CANSparkMax;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -54,6 +56,8 @@ public class RobotContainer {
     autoChooser.addOption("Drive Back", autos.driveBackAuto());
     autoChooser.addOption("Mid cube drive back", autos.scoreMidCubeDriveBack());
     autoChooser.addOption("Score mid cube only", autos.scoreMidCube());
+    autoChooser.addOption("Score high cube", autos.scoreHighCube());
+    autoChooser.addOption("Score high cube then drive", autos.scoreHighCubeDriveBack());
 
     driverTab.add("Auto", autoChooser).withSize(2, 1);
   }
@@ -75,12 +79,30 @@ public class RobotContainer {
     controlboard.operator.rightTrigger().onTrue(superstructure.score());
 
     controlboard.operator.b().onTrue(superstructure.intakeSubstationPosition());
+    controlboard
+        .operator
+        .axisGreaterThan(XboxController.Axis.kLeftY.value, .5)
+        .onTrue(superstructure.floorPickupCube());
 
     controlboard.operator.a().onTrue(superstructure.stowCommand());
 
     controlboard.operator.pov(0).onTrue(superstructure.scoreHighPosition());
     controlboard.operator.pov(90).onTrue(superstructure.scoreMidPosition());
     controlboard.operator.pov(180).onTrue(superstructure.scoreLowPosition());
+
+    controlboard
+        .driver
+        .a()
+        .toggleOnTrue(
+            Commands.runEnd(
+                () -> {
+                  drivetrain.setIdleMode(CANSparkMax.IdleMode.kBrake);
+                  superstructure.setBrakeDisplay(true);
+                },
+                () -> {
+                  drivetrain.setIdleMode(CANSparkMax.IdleMode.kCoast);
+                  superstructure.setBrakeDisplay(false);
+                }));
 
     /*controlboard.operator.x().onTrue(arm.setGoalCommand(Arm.ArmPosition.FLOOR_PICKUP.valueRadians));
     controlboard.operator.y().onTrue(arm.setGoalCommand(Arm.ArmPosition.SCORE.valueRadians));

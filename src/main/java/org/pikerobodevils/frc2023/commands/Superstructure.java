@@ -20,6 +20,7 @@ import org.pikerobodevils.frc2023.subsystems.Extension;
 import org.pikerobodevils.frc2023.subsystems.Intake;
 
 public class Superstructure extends SubsystemBase implements Loggable {
+  private boolean brakeDisplay = false;
   AddressableLED led = new AddressableLED(0);
   AddressableLEDBuffer ledBuffer = new AddressableLEDBuffer(200);
 
@@ -60,10 +61,7 @@ public class Superstructure extends SubsystemBase implements Loggable {
   }
 
   public CommandBase intakeSubstationPosition() {
-    return extension
-        .retractCommand()
-        .andThen(
-            setArmGoalCommand(Arm.ArmPosition.SUBSTATION_PICKUP).alongWith(intake.openCommand()));
+    return setArmGoalCommand(Arm.ArmPosition.SUBSTATION_PICKUP).alongWith(intake.openCommand());
   }
 
   public CommandBase runIntake() {
@@ -76,11 +74,15 @@ public class Superstructure extends SubsystemBase implements Loggable {
         intake.intakeCubeCommand());
   }
 
+  public CommandBase updateArmController() {
+    return arm.holdPositionCommand();
+  }
+
   public CommandBase setArmGoalCommand(Arm.ArmPosition position) {
     return extension
         .retractCommand()
         .raceWith(arm.holdPositionCommand())
-        .andThen(arm.setGoalCommand(position).alongWith());
+        .andThen(arm.setGoalCommand(position));
   }
 
   public CommandBase scoreLowPosition() {
@@ -118,11 +120,23 @@ public class Superstructure extends SubsystemBase implements Loggable {
     return extension.retractCommand().andThen(setArmGoalCommand(Arm.ArmPosition.STOW));
   }
 
+  public CommandBase floorPickupCube() {
+    return setArmGoalCommand(Arm.ArmPosition.FLOOR_PICKUP)
+        .alongWith(intake.openCommand())
+        .andThen(extension.extendCommand().raceWith(updateArmController()));
+  }
+
+  public void setBrakeDisplay(boolean brakeDisplay) {
+    this.brakeDisplay = brakeDisplay;
+  }
+
   @Override
   public void periodic() {
     Color color;
     if (DriverStation.isDisabled()) {
       color = DriverStation.getAlliance() == DriverStation.Alliance.Blue ? Color.kBlue : Color.kRed;
+    } else if (brakeDisplay) {
+      color = Color.kGreen;
     } else if (getCurrentState() == GamePiece.Cone) {
       color = Color.kYellow;
     } else {
