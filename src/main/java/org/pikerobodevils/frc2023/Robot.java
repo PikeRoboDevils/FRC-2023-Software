@@ -5,9 +5,16 @@
 
 package org.pikerobodevils.frc2023;
 
-import edu.wpi.first.wpilibj.TimedRobot;
+import static edu.wpi.first.wpilibj.DataLogManager.log;
+
+import com.revrobotics.CANSparkMax;
+import edu.wpi.first.wpilibj.*;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.util.WPILibVersion;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import io.github.oblarg.oblog.Logger;
+import org.pikerobodevils.lib.Util;
 
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
@@ -16,12 +23,36 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotInit() {
+    SmartDashboard.putData(CommandScheduler.getInstance());
     m_robotContainer = new RobotContainer();
+
+    if (isReal()) {
+      DataLogManager.start();
+    } else {
+      DataLogManager.start(
+          Filesystem.getOperatingDirectory().toPath().resolve("sim_logs").toString());
+    }
+
+    if (isSimulation()) {
+      DriverStation.silenceJoystickConnectionWarning(true);
+    }
+
+    log("Build debug info:");
+    Util.getManifestAttributesForClass(this)
+        .forEach(
+            (key, value) -> {
+              log(key + ": " + value);
+            });
+    log("Software Versions:");
+    log("Java: " + System.getProperty("java.vendor") + " " + System.getProperty("java.version"));
+    log("WPILib: " + WPILibVersion.Version);
+    log("RevLib: " + CANSparkMax.kAPIVersion);
   }
 
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
+    Logger.updateEntries();
   }
 
   @Override
@@ -32,6 +63,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
+    m_robotContainer.drivetrain.setIdleMode(CANSparkMax.IdleMode.kBrake);
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
     if (m_autonomousCommand != null) {
@@ -47,6 +79,7 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
+    m_robotContainer.drivetrain.setIdleMode(CANSparkMax.IdleMode.kCoast);
   }
 
   @Override
@@ -64,5 +97,7 @@ public class Robot extends TimedRobot {
   public void simulationInit() {}
 
   @Override
-  public void simulationPeriodic() {}
+  public void simulationPeriodic() {
+    m_robotContainer.simulationPeriodic();
+  }
 }

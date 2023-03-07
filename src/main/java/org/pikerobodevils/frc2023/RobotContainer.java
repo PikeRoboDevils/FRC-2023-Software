@@ -5,25 +5,122 @@
 
 package org.pikerobodevils.frc2023;
 
-import static edu.wpi.first.wpilibj2.command.Commands.print;
-
+import com.revrobotics.CANSparkMax;
+import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
-import org.pikerobodevils.frc2023.subsystems.Drivetrain;
+import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Commands;
+import io.github.oblarg.oblog.Logger;
+import org.pikerobodevils.frc2023.commands.Autos;
+import org.pikerobodevils.frc2023.commands.Superstructure;
+import org.pikerobodevils.frc2023.simulation.ArmSim;
+import org.pikerobodevils.frc2023.subsystems.*;
 
 public class RobotContainer {
-  Drivetrain drivetrain = new Drivetrain();
-  ControlBoard controlboard = new ControlBoard();
+  public final Drivetrain drivetrain = new Drivetrain();
+  public final Arm arm = new Arm();
+
+  public final Intake intake = new Intake();
+
+  public final Extension extension = new Extension();
+  public final ControlBoard controlboard = new ControlBoard();
+
+  private final Superstructure superstructure = new Superstructure(arm, intake, extension);
+  private final ArmSim armSim = new ArmSim(arm);
+
+  private final Pneumatics pneumatics = new Pneumatics();
+
+  Autos autos = new Autos(drivetrain, superstructure);
+  private final ShuffleboardTab driverTab = Shuffleboard.getTab("Driver Dashboard");
+  SendableChooser<CommandBase> autoChooser = new SendableChooser<>();
 
   public RobotContainer() {
-
+    /**
+     * arm.setDefaultCommand(arm.run(() -> { arm.setVoltage(-controlboard.operator.getLeftY() * 6);
+     * }));
+     */
     drivetrain.setDefaultCommand(
         drivetrain.arcadeDriveCommand(controlboard::getSpeed, controlboard::getTurn));
+
+    /*arm.setDefaultCommand(
+    arm.run(() -> {
+      arm.setVoltage(12 * controlboard.operator.getLeftX());
+    }));*/
     configureBindings();
+    Logger.configureLoggingAndConfig(this, false);
+
+    autoChooser.setDefaultOption("No auto", Commands.none());
+    autoChooser.addOption("Drive Back", autos.driveBackAuto());
+    autoChooser.addOption("Mid cube drive back", autos.scoreMidCubeDriveBack());
+    autoChooser.addOption("Score mid cube only", autos.scoreMidCube());
+    autoChooser.addOption("Score high cube", autos.scoreHighCube());
+    autoChooser.addOption("Score high cube then drive", autos.scoreHighCubeDriveBack());
+
+    driverTab.add("Auto", autoChooser).withSize(2, 1);
   }
 
-  private void configureBindings() {}
+  private void configureBindings() {
+    controlboard
+        .operator
+        .x()
+        .onTrue(
+            Commands.runOnce(() -> superstructure.setCurrentState(Superstructure.GamePiece.Cube)));
+    controlboard
+        .operator
+        .y()
+        .onTrue(
+            Commands.runOnce(() -> superstructure.setCurrentState(Superstructure.GamePiece.Cone)));
+
+    controlboard.operator.leftTrigger().whileTrue(superstructure.runIntake());
+
+    controlboard.operator.rightTrigger().onTrue(superstructure.score());
+
+    controlboard.operator.b().onTrue(superstructure.intakeSubstationPosition());
+    controlboard
+        .operator
+        .axisGreaterThan(XboxController.Axis.kLeftY.value, .5)
+        .onTrue(superstructure.floorPickupCube());
+
+    controlboard.operator.a().onTrue(superstructure.stowCommand());
+
+    controlboard.operator.pov(0).onTrue(superstructure.scoreHighPosition());
+    controlboard.operator.pov(90).onTrue(superstructure.scoreMidPosition());
+    controlboard.operator.pov(180).onTrue(superstructure.scoreLowPosition());
+
+    controlboard
+        .driver
+        .a()
+        .toggleOnTrue(
+            Commands.runEnd(
+                () -> {
+                  drivetrain.setIdleMode(CANSparkMax.IdleMode.kBrake);
+                  superstructure.setBrakeDisplay(true);
+                },
+                () -> {
+                  drivetrain.setIdleMode(CANSparkMax.IdleMode.kCoast);
+                  superstructure.setBrakeDisplay(false);
+                }));
+
+    /*controlboard.operator.x().onTrue(arm.setGoalCommand(Arm.ArmPosition.FLOOR_PICKUP.valueRadians));
+    controlboard.operator.y().onTrue(arm.setGoalCommand(Arm.ArmPosition.SCORE.valueRadians));
+
+    controlboard.operator.leftBumper().onTrue(extension.runOnce(extension::extend));
+    controlboard.operator.rightBumper().onTrue(extension.runOnce(extension::retract));*/
+
+    /*
+     * controlboard.operator.x().onTrue(intake.runOnce(intake::setOpen));
+     * controlboard.operator.y().onTrue(intake.runOnce(intake::setClose));*
+     */
+  }
+
+  public void simulationPeriodic() {
+    armSim.update();
+  }
 
   public Command getAutonomousCommand() {
-    return print("No autonomous command configured");
+    return autoChooser.getSelected();
   }
 }
