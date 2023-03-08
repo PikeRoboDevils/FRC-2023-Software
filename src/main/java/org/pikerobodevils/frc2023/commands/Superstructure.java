@@ -24,9 +24,9 @@ public class Superstructure extends SubsystemBase implements Loggable {
   AddressableLED led = new AddressableLED(0);
   AddressableLEDBuffer ledBuffer = new AddressableLEDBuffer(200);
 
-  private final Arm arm;
-  private final Intake intake;
-  private final Extension extension;
+  @Log.Exclude private final Arm arm;
+  @Log.Exclude private final Intake intake;
+  @Log.Exclude private final Extension extension;
 
   public enum GamePiece {
     Cube,
