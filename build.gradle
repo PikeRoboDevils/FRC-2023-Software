@@ -1,3 +1,5 @@
+import edu.wpi.first.gradlerio.simulation.JavaSimulationTask
+
 plugins {
   id "java"
   id "edu.wpi.first.GradleRIO" version "2023.4.2"
@@ -166,5 +168,22 @@ spotless {
     trimTrailingWhitespace()
     indentWithSpaces(2)
     endWithNewline()
+  }
+}
+
+def ensureLogPath = tasks.register("ensureLogPath") {
+  def directory = file("sim_logs")
+  doLast {
+    directory.mkdirs()
+  }
+}
+
+tasks.withType(JavaSimulationTask).configureEach {
+  dependsOn(ensureLogPath)
+}
+
+tasks.register("cleanLogs", Delete) {
+  delete fileTree("${projectDir}/sim_logs") {
+    include '*.wpilog'
   }
 }

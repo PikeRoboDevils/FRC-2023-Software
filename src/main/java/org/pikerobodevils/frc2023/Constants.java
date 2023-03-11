@@ -8,6 +8,7 @@ package org.pikerobodevils.frc2023;
 import com.revrobotics.CANSparkMax.IdleMode;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.Filesystem;
 
 /**
  * The Constants class provides a convenient place to hold robot-wide numerical or boolean
@@ -16,6 +17,9 @@ import edu.wpi.first.math.util.Units;
  */
 public final class Constants {
   public static final boolean LOG_IN_SIM = false;
+  public static final String SIM_LOG_DIR =
+      Filesystem.getOperatingDirectory().toPath().resolve("sim_logs").toString();
+  public static final String RIO_LOG_DIR = Filesystem.getOperatingDirectory().toPath().toString();
 
   public static class DrivetrainConstants {
     public static final int LEFT_LEADER_ID = 1;

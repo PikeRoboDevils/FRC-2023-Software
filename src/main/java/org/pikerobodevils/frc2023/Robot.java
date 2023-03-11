@@ -5,16 +5,13 @@
 
 package org.pikerobodevils.frc2023;
 
-import static edu.wpi.first.wpilibj.DataLogManager.log;
-
 import com.revrobotics.CANSparkMax;
 import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.util.WPILibVersion;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import io.github.oblarg.oblog.Logger;
-import org.pikerobodevils.lib.Util;
+import org.pikerobodevils.lib.DataLogUtils;
 
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
@@ -29,24 +26,12 @@ public class Robot extends TimedRobot {
     if (isReal()) {
       DataLogManager.start();
     } else {
-      DataLogManager.start(
-          Filesystem.getOperatingDirectory().toPath().resolve("sim_logs").toString());
-    }
-
-    if (isSimulation()) {
+      DataLogManager.start(Constants.SIM_LOG_DIR);
       DriverStation.silenceJoystickConnectionWarning(true);
     }
 
-    log("Build debug info:");
-    Util.getManifestAttributesForClass(this)
-        .forEach(
-            (key, value) -> {
-              log(key + ": " + value);
-            });
-    log("Software Versions:");
-    log("Java: " + System.getProperty("java.vendor") + " " + System.getProperty("java.version"));
-    log("WPILib: " + WPILibVersion.Version);
-    log("RevLib: " + CANSparkMax.kAPIVersion);
+    DataLogUtils.logManifestMetadata(this);
+    DataLogUtils.logSoftwareVersionMetadata();
   }
 
   @Override
