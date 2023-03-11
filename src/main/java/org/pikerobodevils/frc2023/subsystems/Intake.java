@@ -12,16 +12,16 @@ import com.revrobotics.CANSparkMaxLowLevel;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
-import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import io.github.oblarg.oblog.Loggable;
 import io.github.oblarg.oblog.annotations.Log;
+import org.pikerobodevils.frc2023.Constants;
 
 public class Intake extends SubsystemBase implements Loggable {
   DoubleSolenoid intakeCylinders =
-      new DoubleSolenoid(PneumaticsModuleType.REVPH, FORWARD_CHANNEL, REVERSE_CHANNEL);
+      new DoubleSolenoid(Constants.PM_TYPE, FORWARD_CHANNEL, REVERSE_CHANNEL);
 
   // left
   private final CANSparkMax main =

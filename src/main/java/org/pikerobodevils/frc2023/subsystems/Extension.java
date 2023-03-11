@@ -8,16 +8,16 @@ package org.pikerobodevils.frc2023.subsystems;
 import static org.pikerobodevils.frc2023.Constants.ExtensionConstants.*;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
-import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import org.pikerobodevils.frc2023.Constants;
 
 public class Extension extends SubsystemBase {
   private final DoubleSolenoid upper =
-      new DoubleSolenoid(PneumaticsModuleType.REVPH, UPPER_FORWARD, UPPER_REVERSE);
+      new DoubleSolenoid(Constants.PM_TYPE, UPPER_FORWARD, UPPER_REVERSE);
   private final DoubleSolenoid lower =
-      new DoubleSolenoid(PneumaticsModuleType.REVPH, LOWER_FORWARD, LOWER_REVERSE);
+      new DoubleSolenoid(Constants.PM_TYPE, LOWER_FORWARD, LOWER_REVERSE);
 
   public Extension() {
     retract();

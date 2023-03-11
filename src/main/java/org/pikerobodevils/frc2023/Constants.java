@@ -9,6 +9,8 @@ import com.revrobotics.CANSparkMax.IdleMode;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.RobotBase;
 
 /**
  * The Constants class provides a convenient place to hold robot-wide numerical or boolean
@@ -16,6 +18,8 @@ import edu.wpi.first.wpilibj.Filesystem;
  * globally (i.e. public static). Do not put anything functional in this class.
  */
 public final class Constants {
+  public static final PneumaticsModuleType PM_TYPE =
+      RobotBase.isReal() ? PneumaticsModuleType.REVPH : PneumaticsModuleType.CTREPCM;
   public static final boolean LOG_IN_SIM = false;
   public static final String SIM_LOG_DIR =
       Filesystem.getOperatingDirectory().toPath().resolve("sim_logs").toString();
