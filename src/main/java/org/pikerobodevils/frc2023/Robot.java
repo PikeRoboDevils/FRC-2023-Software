@@ -20,13 +20,17 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotInit() {
-    SmartDashboard.putData(CommandScheduler.getInstance());
-    m_robotContainer = new RobotContainer();
-
     if (isReal()) {
       DataLogManager.start();
     } else {
       DataLogManager.start(Constants.SIM_LOG_DIR);
+    }
+    DriverStation.startDataLog(DataLogManager.getLog());
+
+    SmartDashboard.putData(CommandScheduler.getInstance());
+    m_robotContainer = new RobotContainer();
+
+    if (isSimulation()) {
       DriverStation.silenceJoystickConnectionWarning(true);
     }
 
