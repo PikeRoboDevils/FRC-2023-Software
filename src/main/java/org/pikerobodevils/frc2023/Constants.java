@@ -59,14 +59,14 @@ public final class Constants {
     public static final double ENCODER_OFFSET =
         Units.degreesToRadians(OFFSET_DEGREES) / RAD_PER_ENCODER_ROTATION;
 
-    public static final double KP = 5.5; // 5.2103;
+    public static final double KP = 5.3731; // 5.2103;
     public static final double KI = 0;
-    public static final double KD = 1.2;
+    public static final double KD = 0; // 1.6179;
 
-    public static final double KS = 0.21532;
-    public static final double KG = 0.68204;
-    public static final double KV = 2.1895;
-    public static final double KA = 0.094636;
+    public static final double KS = 0.19677;
+    public static final double KG = .5;
+    public static final double KV = 2.114;
+    public static final double KA = 0.12894;
 
     /**
      * SIM GAINS public static final double KP = 5; public static final double KI = 0; public static
@@ -77,7 +77,7 @@ public final class Constants {
      */
     public static final double MAX_VELO = Math.PI;
     // Rad / s / s
-    public static final double MAX_ACCEL = Math.PI * 4;
+    public static final double MAX_ACCEL = Math.PI * 3;
     public static final TrapezoidProfile.Constraints CONSTRAINTS =
         new TrapezoidProfile.Constraints(MAX_VELO, MAX_ACCEL);
 

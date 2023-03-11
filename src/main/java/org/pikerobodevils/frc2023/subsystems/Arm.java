@@ -189,7 +189,6 @@ public class Arm extends SubsystemBase implements Loggable {
     // use the newly updated setpoint to calculate a feedforward.
     var setpoint = controller.getSetpoint();
     var feedforwardOutput = feedforward.calculate(getPosition(), setpoint.velocity);
-
     var totalOutputVolts = feedbackOutput + feedforwardOutput;
     setVoltage(totalOutputVolts);
   }
