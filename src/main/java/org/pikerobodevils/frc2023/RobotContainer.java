@@ -94,7 +94,7 @@ public class RobotContainer {
         .driver
         .a()
         .toggleOnTrue(
-            Commands.runEnd(
+            Commands.startEnd(
                 () -> {
                   drivetrain.setIdleMode(CANSparkMax.IdleMode.kBrake);
                   superstructure.setBrakeDisplay(true);
@@ -102,7 +102,7 @@ public class RobotContainer {
                 () -> {
                   drivetrain.setIdleMode(CANSparkMax.IdleMode.kCoast);
                   superstructure.setBrakeDisplay(false);
-                }));
+                }).ignoringDisable(true));
 
     /*controlboard.operator.x().onTrue(arm.setGoalCommand(Arm.ArmPosition.FLOOR_PICKUP.valueRadians));
     controlboard.operator.y().onTrue(arm.setGoalCommand(Arm.ArmPosition.SCORE.valueRadians));
