@@ -22,28 +22,20 @@ public final class Autos {
   }
 
   public CommandBase scoreMidCubeDriveBack() {
-    return scoreMidCube().andThen(driveBackAuto().raceWith(superstructure.updateArmController()));
+    return scoreMidCube().andThen(driveBackAuto());
   }
 
   public CommandBase scoreHighCube() {
     return superstructure
         .scoreHighPosition()
-        .andThen(
-            drivetrain
-                .setLeftRightVoltageCommand(3, 3)
-                .withTimeout(.4)
-                .raceWith(superstructure.updateArmController()))
+        .andThen(drivetrain.setLeftRightVoltageCommand(3, 3).withTimeout(.4))
         .andThen(superstructure.score())
-        .andThen(
-            drivetrain
-                .setLeftRightVoltageCommand(-3, -3)
-                .withTimeout(.4)
-                .raceWith(superstructure.updateArmController()))
+        .andThen(drivetrain.setLeftRightVoltageCommand(-3, -3).withTimeout(.4))
         .andThen(superstructure.stowCommand());
   }
 
   public CommandBase scoreHighCubeDriveBack() {
-    return scoreHighCube().andThen(driveBackAuto().raceWith(superstructure.updateArmController()));
+    return scoreHighCube().andThen(driveBackAuto());
   }
 
   public CommandBase scoreMidCube() {
