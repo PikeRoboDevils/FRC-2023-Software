@@ -43,7 +43,9 @@ public class RobotContainer {
      * }));
      */
     drivetrain.setDefaultCommand(
-        drivetrain.arcadeDriveCommand(controlboard::getSpeed, controlboard::getTurn));
+        drivetrain
+            .arcadeDriveCommand(controlboard::getSpeed, controlboard::getTurn)
+            .withName("Default Drive Command"));
 
     /*arm.setDefaultCommand(
     arm.run(() -> {

@@ -79,7 +79,7 @@ public class Arm extends SubsystemBase implements Loggable {
     absoluteEncoder.setDistancePerRotation(RAD_PER_ENCODER_ROTATION);
     absoluteEncoder.setPositionOffset(ENCODER_OFFSET);
 
-    setDefaultCommand(holdPositionCommand());
+    setDefaultCommand(holdPositionCommand().withName("Default Hold Position"));
 
     controller.reset(getPosition());
     setGoal(ArmPosition.STOW.valueRadians);

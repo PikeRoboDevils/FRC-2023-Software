@@ -79,10 +79,7 @@ public class Superstructure extends SubsystemBase implements Loggable {
   }
 
   public CommandBase setArmGoalCommand(Arm.ArmPosition position) {
-    return extension
-        .retractCommand()
-        .raceWith(arm.holdPositionCommand())
-        .andThen(arm.setGoalCommand(position));
+    return extension.retractCommand().andThen(arm.setGoalCommand(position).asProxy());
   }
 
   public CommandBase scoreLowPosition() {
@@ -93,8 +90,7 @@ public class Superstructure extends SubsystemBase implements Loggable {
 
   public CommandBase scoreMidPosition() {
     return stateCondition(
-        setArmGoalCommand(Arm.ArmPosition.SCORE_CONE_MID)
-            .andThen(extension.extendCommand().raceWith(arm.holdPositionCommand())),
+        setArmGoalCommand(Arm.ArmPosition.SCORE_CONE_MID).andThen(extension.extendCommand()),
         setArmGoalCommand(Arm.ArmPosition.SCORE_CUBE_MID));
   }
 
