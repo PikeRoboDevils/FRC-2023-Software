@@ -5,7 +5,9 @@
 
 package org.pikerobodevils.frc2023.commands;
 
+import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Commands;
 import org.pikerobodevils.frc2023.subsystems.Drivetrain;
 
 public final class Autos {
@@ -43,5 +45,86 @@ public final class Autos {
         .scoreMidPosition()
         .andThen(superstructure.score())
         .andThen(superstructure.stowCommand());
+  }
+
+  // Pitch: + --> backwards
+  public CommandBase autoBalanceBackwards() {
+    Debouncer pitchDebouncer = new Debouncer(0.25, Debouncer.DebounceType.kRising);
+    Debouncer rateDebouncer = new Debouncer(0.05, Debouncer.DebounceType.kRising);
+    return Commands.runOnce(
+            () -> {
+              pitchDebouncer.calculate(false);
+              rateDebouncer.calculate(false);
+            })
+        .andThen(
+            drivetrain
+                .setLeftRightVoltageCommand(-3, -3)
+                .until(() -> pitchDebouncer.calculate(drivetrain.getPitch() < -10)))
+        .andThen(
+            drivetrain
+                .setLeftRightVoltageCommand(-1., -1.)
+                .withTimeout(1)
+                .andThen(
+                    drivetrain
+                        .setLeftRightVoltageCommand(-.75, -.75)
+                        .until(
+                            () -> {
+                              System.out.println(drivetrain.getPitchRate());
+                              return rateDebouncer.calculate(drivetrain.getPitchRate() > 15);
+                            })))
+        .andThen(
+            drivetrain.run(
+                () -> {
+                  if (drivetrain.getPitch() < -5) {
+                    System.out.println("BACK");
+                    drivetrain.setLeftRightVoltage(-0.5, -0.5);
+                  } else if (drivetrain.getPitch() > 5) {
+                    System.out.println("FORWARD");
+                    drivetrain.setLeftRightVoltage(0.5, 0.5);
+                  } else {
+                    System.out.println("STOP");
+                    drivetrain.setLeftRightVoltage(0, 0);
+                  }
+                }));
+  }
+
+  public CommandBase autoBalanceForwards() {
+    Debouncer pitchDebouncer = new Debouncer(0.75, Debouncer.DebounceType.kRising);
+    Debouncer rateDebouncer = new Debouncer(0.05, Debouncer.DebounceType.kRising);
+    return Commands.runOnce(
+            () -> {
+              pitchDebouncer.calculate(false);
+              rateDebouncer.calculate(false);
+            })
+        .andThen(
+            drivetrain
+                .setLeftRightVoltageCommand(3, 3)
+                .until(() -> pitchDebouncer.calculate(drivetrain.getPitch() > 14)))
+        .andThen(
+            drivetrain
+                .setLeftRightVoltageCommand(1., 1.)
+                .withTimeout(1)
+                .andThen(
+                    drivetrain
+                        .setLeftRightVoltageCommand(.75, .75)
+                        .until(
+                            () -> {
+                              System.out.println(drivetrain.getPitchRate());
+                              return rateDebouncer.calculate(drivetrain.getPitchRate() < -15);
+                            })))
+        .andThen(
+            drivetrain.run(
+                () -> {
+                  if (drivetrain.getPitch() < -5) {
+                    System.out.println("BACK");
+                    drivetrain.setLeftRightVoltage(-0.5, -0.5);
+                  } else if (drivetrain.getPitch() > 5) {
+                    System.out.println("FORWARD");
+                    drivetrain.setLeftRightVoltage(0.5, 0.5);
+                  } else {
+                    System.out.println("STOP");
+                    drivetrain.setLeftRightVoltage(0, 0);
+                  }
+                }));
   }
 }

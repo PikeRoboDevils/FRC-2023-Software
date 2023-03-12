@@ -60,6 +60,8 @@ public class RobotContainer {
     autoChooser.addOption("Score mid cube only", autos.scoreMidCube());
     autoChooser.addOption("Score high cube", autos.scoreHighCube());
     autoChooser.addOption("Score high cube then drive", autos.scoreHighCubeDriveBack());
+    autoChooser.addOption("Auto Balance Forwards", autos.autoBalanceForwards());
+    autoChooser.addOption("Auto Balance Backwards", autos.autoBalanceBackwards());
 
     driverTab.add("Auto", autoChooser).withSize(2, 1);
   }

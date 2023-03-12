@@ -122,7 +122,7 @@ public class Superstructure extends SubsystemBase implements Loggable {
   public CommandBase floorPickupCube() {
     return setArmGoalCommand(Arm.ArmPosition.FLOOR_PICKUP)
         .alongWith(intake.openCommand())
-        .andThen(extension.extendCommand().raceWith(updateArmController()));
+        .andThen(extension.extendCommand());
   }
 
   public void setBrakeDisplay(boolean brakeDisplay) {
