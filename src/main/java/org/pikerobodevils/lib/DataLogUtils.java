@@ -16,7 +16,7 @@ public class DataLogUtils {
   public static final String METADATA_PATH = "/RealMetadata/";
 
   public static void logMetadataEntry(String key, Object value) {
-    var entry = new StringLogEntry(DataLogManager.getLog(), key);
+    var entry = new StringLogEntry(DataLogManager.getLog(), METADATA_PATH + key);
     entry.append(value.toString());
     entry.finish();
     DataLogManager.log(String.format("%-25s%s", key + ":", value));
