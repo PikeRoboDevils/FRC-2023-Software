@@ -35,9 +35,7 @@ public class SparkMax extends CANSparkMax {
 
   private static SparkMaxMonitor s_monitor = new SparkMaxMonitor();
 
-  private static final int VELOCITY_GAIN_SLOT = 0;
-  private static final int POSITION_GAIN_SLOT = 1;
-  private static final int SMART_MOTION_GAIN_SLOT = 2;
+  private static boolean configSuccessful = true;
 
   /**
    * Monitor the Spark Max to check for reset. This is used by the health monitor to automatically
@@ -130,6 +128,7 @@ public class SparkMax extends CANSparkMax {
 
       if (setAttemptNumber >= kParameterSetAttemptCount) {
         // Logger.tag("Spark Max").error("Spark Max ID {}: Failed to initialize!!", getDeviceId());
+        configSuccessful = false;
         break;
       }
     }
@@ -164,6 +163,7 @@ public class SparkMax extends CANSparkMax {
       if (setAttemptNumber >= kParameterSetAttemptCount) {
         /*Logger.tag("Spark Max")
         .error("Spark Max ID {}: Failed to run mutator function!!", getDeviceId());*/
+        configSuccessful = false;
         break;
       }
       result = fcn.apply(this, true);
@@ -282,5 +282,9 @@ public class SparkMax extends CANSparkMax {
     }
     Timer.delay(0.25);
     // Logger.tag("SparkMax").debug("Burn Flash Complete.");
+  }
+
+  public static boolean configSuccessful() {
+    return configSuccessful;
   }
 }
