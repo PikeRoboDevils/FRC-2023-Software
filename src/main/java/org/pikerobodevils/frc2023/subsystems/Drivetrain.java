@@ -5,6 +5,8 @@
 
 package org.pikerobodevils.frc2023.subsystems;
 
+import static org.pikerobodevils.frc2023.Constants.AutoBalanceConstants.BALANCED_THRESHOLD;
+import static org.pikerobodevils.frc2023.Constants.AutoBalanceConstants.BANG_BANG_VOLTS;
 import static org.pikerobodevils.frc2023.Constants.DrivetrainConstants.*;
 
 import com.kauailabs.navx.frc.AHRS;
@@ -155,6 +157,24 @@ public class Drivetrain extends SubsystemBase implements Loggable {
             (interrupted) -> {
               setLeftRightVoltage(0, 0);
             });
+  }
+
+  public CommandBase bangBangBalance() {
+    return run(
+        () -> {
+          var pitch = getPitch();
+          double outputVolts;
+          if (pitch > BALANCED_THRESHOLD) {
+            // too far back; go forwards
+            outputVolts = BANG_BANG_VOLTS;
+          } else if (pitch < -BALANCED_THRESHOLD) {
+            // too far forwards; go back
+            outputVolts = -BANG_BANG_VOLTS;
+          } else {
+            outputVolts = 0;
+          }
+          setLeftRightVoltage(outputVolts, outputVolts);
+        });
   }
 
   @Override

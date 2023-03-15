@@ -72,20 +72,7 @@ public final class Autos {
                               System.out.println(drivetrain.getPitchRate());
                               return rateDebouncer.calculate(drivetrain.getPitchRate() > 15);
                             })))
-        .andThen(
-            drivetrain.run(
-                () -> {
-                  if (drivetrain.getPitch() < -5) {
-                    System.out.println("BACK");
-                    drivetrain.setLeftRightVoltage(-0.5, -0.5);
-                  } else if (drivetrain.getPitch() > 5) {
-                    System.out.println("FORWARD");
-                    drivetrain.setLeftRightVoltage(0.5, 0.5);
-                  } else {
-                    System.out.println("STOP");
-                    drivetrain.setLeftRightVoltage(0, 0);
-                  }
-                }));
+        .andThen(drivetrain.bangBangBalance());
   }
 
   public CommandBase autoBalanceForwards() {
@@ -112,19 +99,6 @@ public final class Autos {
                               System.out.println(drivetrain.getPitchRate());
                               return rateDebouncer.calculate(drivetrain.getPitchRate() < -15);
                             })))
-        .andThen(
-            drivetrain.run(
-                () -> {
-                  if (drivetrain.getPitch() < -5) {
-                    System.out.println("BACK");
-                    drivetrain.setLeftRightVoltage(-0.5, -0.5);
-                  } else if (drivetrain.getPitch() > 5) {
-                    System.out.println("FORWARD");
-                    drivetrain.setLeftRightVoltage(0.5, 0.5);
-                  } else {
-                    System.out.println("STOP");
-                    drivetrain.setLeftRightVoltage(0, 0);
-                  }
-                }));
+        .andThen(drivetrain.bangBangBalance());
   }
 }

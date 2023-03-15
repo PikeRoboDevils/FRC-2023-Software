@@ -38,6 +38,12 @@ public final class Constants {
     public static final int CURRENT_LIMIT = 50;
   }
 
+  public static class AutoBalanceConstants {
+    public static final double BALANCED_THRESHOLD = 5; // degrees
+
+    public static final double BANG_BANG_VOLTS = 0.5; // V
+  }
+
   public static class ControlBoardConstants {
     public static final int DRIVER_PORT = 0;
     public static final int OPERATOR_PORT = 1;
