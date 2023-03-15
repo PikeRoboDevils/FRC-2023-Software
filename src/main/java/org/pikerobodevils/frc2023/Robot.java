@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import io.github.oblarg.oblog.Logger;
 import org.pikerobodevils.lib.DataLogUtils;
+import org.pikerobodevils.lib.vendor.SparkMax;
 
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
@@ -28,7 +29,6 @@ public class Robot extends TimedRobot {
     DriverStation.startDataLog(DataLogManager.getLog());
 
     SmartDashboard.putData(CommandScheduler.getInstance());
-    m_robotContainer = new RobotContainer();
 
     if (isSimulation()) {
       DriverStation.silenceJoystickConnectionWarning(true);
@@ -36,6 +36,9 @@ public class Robot extends TimedRobot {
 
     DataLogUtils.logManifestMetadata(this);
     DataLogUtils.logSoftwareVersionMetadata();
+
+    m_robotContainer = new RobotContainer();
+    SparkMax.burnFlashInSync();
   }
 
   @Override

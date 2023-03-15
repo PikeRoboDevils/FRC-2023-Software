@@ -24,6 +24,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import io.github.oblarg.oblog.Loggable;
 import io.github.oblarg.oblog.annotations.Log;
 import java.util.function.DoubleSupplier;
+import org.pikerobodevils.lib.vendor.SparkMax;
+import org.pikerobodevils.lib.vendor.SparkMaxUtils;
 
 public class Arm extends SubsystemBase implements Loggable {
 
@@ -44,10 +46,10 @@ public class Arm extends SubsystemBase implements Loggable {
     public final double valueRadians;
   }
 
-  CANSparkMax leftController =
-      new CANSparkMax(LEFT_CONTROLLER_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
-  CANSparkMax rightController =
-      new CANSparkMax(RIGHT_CONTROLLER_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
+  SparkMax leftController =
+      new SparkMax(LEFT_CONTROLLER_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
+  SparkMax rightController =
+      new SparkMax(RIGHT_CONTROLLER_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
 
   Encoder encoder = new Encoder(ENCODER_QUAD_A, ENCODER_QUAD_B, true, CounterBase.EncodingType.k4X);
   DutyCycleEncoder absoluteEncoder = new DutyCycleEncoder(ENCODER_ABS_DIO);
@@ -64,16 +66,19 @@ public class Arm extends SubsystemBase implements Loggable {
       m_armPivot.append(new MechanismLigament2d("Arm", 30, 0, 6, new Color8Bit(Color.kYellow)));
 
   public Arm() {
-    rightController.restoreFactoryDefaults();
-    rightController.setInverted(true);
-    rightController.setIdleMode(CANSparkMax.IdleMode.kBrake);
-    rightController.burnFlash();
-    Timer.delay(0.1);
-
-    leftController.restoreFactoryDefaults();
-    leftController.setIdleMode(CANSparkMax.IdleMode.kBrake);
-    leftController.burnFlash();
-    Timer.delay(0.1);
+    rightController.withInitializer(
+        (spark, isInit) -> {
+          int errors = 0;
+          errors += SparkMaxUtils.check(spark.setIdleMode(CANSparkMax.IdleMode.kBrake));
+          spark.setInverted(true);
+          return errors == 0;
+        });
+    leftController.withInitializer(
+        (spark, isInit) -> {
+          int errors = 0;
+          errors += SparkMaxUtils.check(spark.setIdleMode(CANSparkMax.IdleMode.kBrake));
+          return errors == 0;
+        });
 
     encoder.setDistancePerPulse(RAD_PER_QUAD_TICK);
     absoluteEncoder.setDistancePerRotation(RAD_PER_ENCODER_ROTATION);
