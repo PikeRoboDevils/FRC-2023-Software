@@ -5,14 +5,19 @@
 
 package org.pikerobodevils.frc2023.subsystems;
 
+import static org.pikerobodevils.frc2023.Constants.AutoBalanceConstants.BALANCED_THRESHOLD;
+import static org.pikerobodevils.frc2023.Constants.AutoBalanceConstants.BANG_BANG_VOLTS;
 import static org.pikerobodevils.frc2023.Constants.DrivetrainConstants.*;
 
+import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import io.github.oblarg.oblog.Loggable;
+import io.github.oblarg.oblog.annotations.Log;
 import java.util.function.DoubleSupplier;
 
 public class Drivetrain extends SubsystemBase implements Loggable {
@@ -28,6 +33,12 @@ public class Drivetrain extends SubsystemBase implements Loggable {
       new CANSparkMax(RIGHT_FOLLOWER_ONE_ID, MotorType.kBrushless);
   private final CANSparkMax rightFollowerTwo =
       new CANSparkMax(RIGHT_FOLLOWER_TWO_ID, MotorType.kBrushless);
+
+  private final AHRS navX = new AHRS();
+
+  LinearFilter pitchRate = LinearFilter.backwardFiniteDifference(1, 2, 0.02);
+
+  double currentPitchRate = 0;
 
   /** Creates a new Drivetrain. */
   public Drivetrain() {
@@ -87,6 +98,36 @@ public class Drivetrain extends SubsystemBase implements Loggable {
     rightFollowerTwo.setIdleMode(mode);
   }
 
+  @Log(name = "Yaw")
+  public double getYaw() {
+    return navX.getYaw();
+  }
+
+  @Log(name = "Pitch")
+  public double getPitch() {
+    return navX.getPitch();
+  }
+
+  @Log(name = "Pitch Rate")
+  public double getPitchRate() {
+    return currentPitchRate;
+  }
+
+  @Log(name = "Roll")
+  public double getRoll() {
+    return navX.getRoll();
+  }
+
+  @Log
+  public double getLeftVoltage() {
+    return leftLeader.getAppliedOutput() * leftLeader.getBusVoltage();
+  }
+
+  @Log
+  public double getRightVoltage() {
+    return leftLeader.getAppliedOutput() * leftLeader.getBusVoltage();
+  }
+
   public void arcadeDrive(double speed, double rotation) {
     DifferentialDrive.WheelSpeeds speeds = DifferentialDrive.arcadeDriveIK(speed, rotation, false);
     setLeftRight(speeds.left, speeds.right);
@@ -118,8 +159,26 @@ public class Drivetrain extends SubsystemBase implements Loggable {
             });
   }
 
+  public CommandBase bangBangBalance() {
+    return run(
+        () -> {
+          var pitch = getPitch();
+          double outputVolts;
+          if (pitch > BALANCED_THRESHOLD) {
+            // too far back; go forwards
+            outputVolts = BANG_BANG_VOLTS;
+          } else if (pitch < -BALANCED_THRESHOLD) {
+            // too far forwards; go back
+            outputVolts = -BANG_BANG_VOLTS;
+          } else {
+            outputVolts = 0;
+          }
+          setLeftRightVoltage(outputVolts, outputVolts);
+        });
+  }
+
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
+    currentPitchRate = pitchRate.calculate(getPitch());
   }
 }
