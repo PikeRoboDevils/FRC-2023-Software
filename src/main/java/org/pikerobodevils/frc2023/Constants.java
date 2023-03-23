@@ -6,6 +6,7 @@
 package org.pikerobodevils.frc2023;
 
 import com.revrobotics.CANSparkMax.IdleMode;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Filesystem;
@@ -59,9 +60,10 @@ public final class Constants {
     public static final double RAD_PER_ENCODER_ROTATION = 2 * Math.PI * ARM_TO_ENCODER_RATIO;
     public static final double RAD_PER_QUAD_TICK = RAD_PER_ENCODER_ROTATION / QUAD_COUNTS_PER_REV;
 
-    public static final double OFFSET_DEGREES = 38.6;
+    public static final double OFFSET_DEGREES = -43.1;
     public static final double ENCODER_OFFSET =
-        Units.degreesToRadians(OFFSET_DEGREES) / RAD_PER_ENCODER_ROTATION;
+        MathUtil.inputModulus(
+            Units.degreesToRadians(OFFSET_DEGREES) / RAD_PER_ENCODER_ROTATION, 0, 1);
 
     public static final double KP = 5.3731; // 5.2103;
     public static final double KI = 0;
