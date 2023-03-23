@@ -21,6 +21,8 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotInit() {
+    org.tinylog.Logger.tag("Robot Main").debug("This a debug message");
+    org.tinylog.Logger.tag("Robot Main").error("This a err message");
     if (isReal()) {
       DataLogManager.start();
     } else {
