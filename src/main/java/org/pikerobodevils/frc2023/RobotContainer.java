@@ -69,15 +69,11 @@ public class RobotContainer {
     controlboard
         .operator
         .x()
-        .onTrue(
-            Commands.runOnce(
-                () -> superstructure.setCurrentGamePiece(Superstructure.GamePiece.Cube)));
+        .onTrue(Commands.runOnce(() -> superstructure.setGamePiece(Superstructure.GamePiece.Cube)));
     controlboard
         .operator
         .y()
-        .onTrue(
-            Commands.runOnce(
-                () -> superstructure.setCurrentGamePiece(Superstructure.GamePiece.Cone)));
+        .onTrue(Commands.runOnce(() -> superstructure.setGamePiece(Superstructure.GamePiece.Cone)));
 
     controlboard.operator.leftTrigger().whileTrue(superstructure.runIntake());
 
@@ -88,6 +84,10 @@ public class RobotContainer {
         .operator
         .axisGreaterThan(XboxController.Axis.kLeftY.value, .5)
         .onTrue(superstructure.floorPickupCube());
+    controlboard
+        .operator
+        .axisLessThan(XboxController.Axis.kLeftY.value, -.5)
+        .onTrue(superstructure.setStateCommand(Superstructure.SuperstructureState.CUBE_SHOOT));
 
     controlboard.operator.a().onTrue(superstructure.stowCommand());
 

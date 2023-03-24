@@ -5,6 +5,8 @@
 
 package org.pikerobodevils.frc2023.subsystems;
 
+import static org.pikerobodevils.lib.Commands1.*;
+
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
@@ -18,11 +20,6 @@ import io.github.oblarg.oblog.Loggable;
 import io.github.oblarg.oblog.annotations.Log;
 import org.pikerobodevils.frc2023.Constants;
 import org.pikerobodevils.frc2023.subsystems.Arm.ArmPosition;
-import org.pikerobodevils.lib.Commands1;
-
-import java.util.Map;
-
-import static org.pikerobodevils.lib.Commands1.*;
 
 public class Superstructure extends SubsystemBase implements Loggable {
   private boolean brakeDisplay = false;
