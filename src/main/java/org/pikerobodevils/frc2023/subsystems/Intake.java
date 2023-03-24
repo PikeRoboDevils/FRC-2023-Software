@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import io.github.oblarg.oblog.Loggable;
 import io.github.oblarg.oblog.annotations.Log;
+import java.util.function.DoubleSupplier;
 import org.pikerobodevils.frc2023.Constants;
 
 public class Intake extends SubsystemBase implements Loggable {
@@ -110,11 +111,17 @@ public class Intake extends SubsystemBase implements Loggable {
   }
 
   public CommandBase ejectCubeCommand() {
-    return ejectCubeCommand(SHOOT_CUBE_SPEED);
+    return ejectCubeCommand(DEFAULT_OUTTAKE);
   }
 
   public CommandBase ejectCubeCommand(double speed) {
-    return runEnd(() -> setRollers(speed), this::stop).withTimeout(.5);
+    return ejectCubeCommand(() -> speed).withName("Eject Cube: " + speed);
+  }
+
+  public CommandBase ejectCubeCommand(DoubleSupplier speed) {
+    return runEnd(() -> setRollers(speed.getAsDouble()), this::stop)
+        .withTimeout(.5)
+        .withName("Eject Cube");
   }
 
   @Override

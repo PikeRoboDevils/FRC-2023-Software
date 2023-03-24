@@ -115,7 +115,7 @@ public final class Constants {
 
     public static final double HOLD_CUBE_SPEED = -0.05;
 
-    public static final double SHOOT_CUBE_SPEED = .75;
+    public static final double DEFAULT_OUTTAKE = .75;
     public static final double INTAKE_STALL_DETECTION = 15; // Amps
   }
 
