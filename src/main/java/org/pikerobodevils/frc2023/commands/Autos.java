@@ -9,6 +9,7 @@ import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Commands;
 import org.pikerobodevils.frc2023.subsystems.Drivetrain;
+import org.pikerobodevils.frc2023.subsystems.Superstructure;
 
 public final class Autos {
   Drivetrain drivetrain;
@@ -47,6 +48,17 @@ public final class Autos {
         .andThen(superstructure.stowCommand());
   }
 
+  public CommandBase scoreLowCube() {
+    return superstructure
+        .scoreLowPosition()
+        .andThen(superstructure.score())
+        .andThen(superstructure.stowCommand());
+  }
+
+  public CommandBase scoreLowThenBalance() {
+    return scoreLowCube().andThen(autoBalanceBackwards());
+  }
+
   // Pitch: + --> backwards
   public CommandBase autoBalanceBackwards() {
     Debouncer pitchDebouncer = new Debouncer(0.25, Debouncer.DebounceType.kRising);
@@ -66,7 +78,7 @@ public final class Autos {
                 .withTimeout(1)
                 .andThen(
                     drivetrain
-                        .setLeftRightVoltageCommand(-.75, -.75)
+                        .setLeftRightVoltageCommand(-1, -1)
                         .until(
                             () -> {
                               System.out.println(drivetrain.getPitchRate());

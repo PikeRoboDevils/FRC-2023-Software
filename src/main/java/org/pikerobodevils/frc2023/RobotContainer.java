@@ -15,7 +15,6 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Commands;
 import io.github.oblarg.oblog.Logger;
 import org.pikerobodevils.frc2023.commands.Autos;
-import org.pikerobodevils.frc2023.commands.Superstructure;
 import org.pikerobodevils.frc2023.simulation.ArmSim;
 import org.pikerobodevils.frc2023.subsystems.*;
 
@@ -71,12 +70,14 @@ public class RobotContainer {
         .operator
         .x()
         .onTrue(
-            Commands.runOnce(() -> superstructure.setCurrentState(Superstructure.GamePiece.Cube)));
+            Commands.runOnce(
+                () -> superstructure.setCurrentGamePiece(Superstructure.GamePiece.Cube)));
     controlboard
         .operator
         .y()
         .onTrue(
-            Commands.runOnce(() -> superstructure.setCurrentState(Superstructure.GamePiece.Cone)));
+            Commands.runOnce(
+                () -> superstructure.setCurrentGamePiece(Superstructure.GamePiece.Cone)));
 
     controlboard.operator.leftTrigger().whileTrue(superstructure.runIntake());
 
