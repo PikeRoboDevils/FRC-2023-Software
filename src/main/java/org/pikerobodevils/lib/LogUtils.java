@@ -8,12 +8,12 @@ package org.pikerobodevils.lib;
 import static edu.wpi.first.wpilibj.DataLogManager.log;
 
 import com.revrobotics.CANSparkMax;
-import edu.wpi.first.hal.DriverStationJNI;
 import edu.wpi.first.util.datalog.StringLogEntry;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.util.WPILibVersion;
+import org.tinylog.Logger;
 
-public class DataLogUtils {
+public class LogUtils {
   private static StringLogEntry m_messageLog;
   public static final String METADATA_PATH = "/RealMetadata/";
 
@@ -27,7 +27,7 @@ public class DataLogUtils {
     var entry = new StringLogEntry(DataLogManager.getLog(), METADATA_PATH + key);
     entry.append(value.toString());
     entry.finish();
-    DataLogManager.log(String.format("%-25s%s", key + ":", value));
+    Logger.tag("Metadata").info(String.format("%-25s%s", key + ":", value));
   }
 
   public static void logManifestMetadata(Object object) {
@@ -35,7 +35,7 @@ public class DataLogUtils {
     Util.getManifestAttributesForClass(object)
         .forEach(
             (key, value) -> {
-              DataLogUtils.logMetadataEntry(key.toString(), value.toString());
+              LogUtils.logMetadataEntry(key.toString(), value.toString());
             });
   }
 
@@ -53,8 +53,8 @@ public class DataLogUtils {
     m_messageLog.append(message);
   }
 
+  @Deprecated
   public static void warning(String warning) {
-    DriverStationJNI.sendError(true, 1, false, "WARNING: " + warning, "", "", true);
-    logNoPrint("WARNING: " + warning);
+    Logger.tag("LogUtils").warn(warning);
   }
 }

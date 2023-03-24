@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import io.github.oblarg.oblog.Logger;
-import org.pikerobodevils.lib.DataLogUtils;
+import org.pikerobodevils.lib.LogUtils;
 import org.pikerobodevils.lib.vendor.SparkMax;
 
 public class Robot extends TimedRobot {
@@ -21,14 +21,13 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotInit() {
-    org.tinylog.Logger.tag("Robot Main").debug("This a debug message");
-    org.tinylog.Logger.tag("Robot Main").error("This a err message");
     if (isReal()) {
       DataLogManager.start();
     } else {
       DataLogManager.start(Constants.SIM_LOG_DIR);
     }
     DriverStation.startDataLog(DataLogManager.getLog());
+    LogConfig.config();
 
     SmartDashboard.putData(CommandScheduler.getInstance());
 
@@ -36,9 +35,8 @@ public class Robot extends TimedRobot {
       DriverStation.silenceJoystickConnectionWarning(true);
     }
 
-    DataLogUtils.logManifestMetadata(this);
-    DataLogUtils.logSoftwareVersionMetadata();
-
+    LogUtils.logSoftwareVersionMetadata();
+    LogUtils.logManifestMetadata(this);
     m_robotContainer = new RobotContainer();
     SparkMax.burnFlashInSync();
   }
