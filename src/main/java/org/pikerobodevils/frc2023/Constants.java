@@ -66,7 +66,7 @@ public final class Constants {
     public static final double RAD_PER_ENCODER_ROTATION = 2 * Math.PI * ARM_TO_ENCODER_RATIO;
     public static final double RAD_PER_QUAD_TICK = RAD_PER_ENCODER_ROTATION / QUAD_COUNTS_PER_REV;
 
-    public static final double OFFSET_DEGREES = -43.1;
+    public static final double OFFSET_DEGREES = 74;
     public static final double ENCODER_OFFSET =
         MathUtil.inputModulus(
             Units.degreesToRadians(OFFSET_DEGREES) / RAD_PER_ENCODER_ROTATION, 0, 1);

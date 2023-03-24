@@ -31,7 +31,7 @@ public class Arm extends SubsystemBase implements Loggable {
     STOW(-80),
     SUBSTATION_PICKUP(-8),
     SCORE_CONE_LOW(-36),
-    SCORE_CONE_MID(-3),
+    SCORE_CONE_MID(-6),
     SCORE_CUBE_LOW(-60),
     SCORE_CUBE_MID(-26),
     SCORE_CUBE_HIGH(-8),
