@@ -13,7 +13,7 @@ public class LogConfig {
   private static final String format =
       "{date:yyyy-MM-dd HH:mm:ss} - [{tag: none}] - {level}: {message}";
 
-  private static final String consoleLevel = "trace";
+  private static final String consoleLevel = "debug";
 
   private static final String dataLogLevel = "trace";
 
