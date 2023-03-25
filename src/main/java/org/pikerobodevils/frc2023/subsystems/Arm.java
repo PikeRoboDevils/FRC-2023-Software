@@ -38,7 +38,7 @@ public class Arm extends SubsystemBase implements Loggable {
     SCORE_CUBE_MID(-26),
     SCORE_CUBE_HIGH(-8),
     FLOOR_PICKUP(-52),
-    SHOOT_CUBE(-8);
+    SHOOT_CUBE(5);
 
     ArmPosition(double angleDegrees) {
       this.valueRadians = Units.degreesToRadians(angleDegrees);
