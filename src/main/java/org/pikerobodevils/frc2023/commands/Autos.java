@@ -21,7 +21,7 @@ public final class Autos {
   }
 
   public CommandBase driveBackAuto() {
-    return drivetrain.setLeftRightVoltageCommand(-3, -3).withTimeout(3.5);
+    return drivetrain.setLeftRightVoltageCommand(-3, -3).withTimeout(3.6);
   }
 
   public CommandBase scoreLowCube() {
