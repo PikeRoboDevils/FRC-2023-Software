@@ -19,20 +19,19 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import io.github.oblarg.oblog.Loggable;
 import io.github.oblarg.oblog.annotations.Log;
 import java.util.function.DoubleSupplier;
+import org.pikerobodevils.lib.vendor.SparkMax;
 
 public class Drivetrain extends SubsystemBase implements Loggable {
 
-  private final CANSparkMax leftLeader = new CANSparkMax(LEFT_LEADER_ID, MotorType.kBrushless);
-  private final CANSparkMax leftFollowerOne =
-      new CANSparkMax(LEFT_FOLLOWER_ONE_ID, MotorType.kBrushless);
-  private final CANSparkMax leftFollowerTwo =
-      new CANSparkMax(LEFT_FOLLOWER_TWO_ID, MotorType.kBrushless);
+  private final SparkMax leftLeader = new SparkMax(LEFT_LEADER_ID, MotorType.kBrushless);
+  private final SparkMax leftFollowerOne = new SparkMax(LEFT_FOLLOWER_ONE_ID, MotorType.kBrushless);
+  private final SparkMax leftFollowerTwo = new SparkMax(LEFT_FOLLOWER_TWO_ID, MotorType.kBrushless);
 
-  private final CANSparkMax rightLeader = new CANSparkMax(RIGHT_LEADER_ID, MotorType.kBrushless);
-  private final CANSparkMax rightFollowerOne =
-      new CANSparkMax(RIGHT_FOLLOWER_ONE_ID, MotorType.kBrushless);
-  private final CANSparkMax rightFollowerTwo =
-      new CANSparkMax(RIGHT_FOLLOWER_TWO_ID, MotorType.kBrushless);
+  private final SparkMax rightLeader = new SparkMax(RIGHT_LEADER_ID, MotorType.kBrushless);
+  private final SparkMax rightFollowerOne =
+      new SparkMax(RIGHT_FOLLOWER_ONE_ID, MotorType.kBrushless);
+  private final SparkMax rightFollowerTwo =
+      new SparkMax(RIGHT_FOLLOWER_TWO_ID, MotorType.kBrushless);
 
   private final AHRS navX = new AHRS();
 
@@ -45,37 +44,31 @@ public class Drivetrain extends SubsystemBase implements Loggable {
     leftLeader.restoreFactoryDefaults();
     leftLeader.setIdleMode(IDLE_MODE);
     leftLeader.setSmartCurrentLimit(40);
-    leftLeader.burnFlash();
 
     leftFollowerOne.restoreFactoryDefaults();
     leftFollowerOne.setIdleMode(IDLE_MODE);
     leftFollowerOne.follow(leftLeader);
     leftFollowerTwo.setSmartCurrentLimit(CURRENT_LIMIT);
-    leftFollowerOne.burnFlash();
 
     leftFollowerTwo.restoreFactoryDefaults();
     leftFollowerTwo.setIdleMode(IDLE_MODE);
     leftFollowerTwo.follow(leftLeader);
     leftFollowerTwo.setSmartCurrentLimit(CURRENT_LIMIT);
-    leftFollowerTwo.burnFlash();
 
     rightLeader.restoreFactoryDefaults();
     rightLeader.setIdleMode(IDLE_MODE);
     rightLeader.setInverted(true);
     rightLeader.setSmartCurrentLimit(CURRENT_LIMIT);
-    rightLeader.burnFlash();
 
     rightFollowerOne.restoreFactoryDefaults();
     rightFollowerOne.setIdleMode(IDLE_MODE);
     rightFollowerOne.follow(rightLeader);
     rightFollowerTwo.setSmartCurrentLimit(CURRENT_LIMIT);
-    rightFollowerOne.burnFlash();
 
     rightFollowerTwo.restoreFactoryDefaults();
     rightFollowerTwo.setIdleMode(IDLE_MODE);
     rightFollowerTwo.follow(rightLeader);
     rightFollowerTwo.setSmartCurrentLimit(CURRENT_LIMIT);
-    rightFollowerTwo.burnFlash();
   }
 
   public void setLeftRight(double left, double right) {
