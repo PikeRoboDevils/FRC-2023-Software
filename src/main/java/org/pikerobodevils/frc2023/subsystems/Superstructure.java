@@ -46,7 +46,10 @@ public class Superstructure extends SubsystemBase implements Loggable {
     SCORE_CUBE_LOW(ArmPosition.SCORE_CUBE_LOW, .2),
     SCORE_CUBE_MID(ArmPosition.SCORE_CUBE_MID, .5),
     SCORE_CUBE_HIGH(ArmPosition.SCORE_CUBE_HIGH, Constants.IntakeConstants.DEFAULT_OUTTAKE),
-    FLOOR_PICKUP(ArmPosition.FLOOR_PICKUP),
+    FLOOR_PICKUP(
+        ArmPosition.FLOOR_PICKUP,
+        Extension.State.Extended,
+        Constants.IntakeConstants.DEFAULT_OUTTAKE),
     CUBE_SHOOT(ArmPosition.SHOOT_CUBE, 1);
     public final double outtakeSpeed;
     public final ArmPosition armPosition;
@@ -140,14 +143,14 @@ public class Superstructure extends SubsystemBase implements Loggable {
   }
 
   public CommandBase setArmGoalCommand(ArmPosition position) {
-    return extension.retractCommand().andThen(arm.setGoalCommand(position).asProxy());
+    return arm.setGoalCommand(position).asProxy();
   }
 
   public CommandBase setStateCommand(SuperstructureState state) {
     return extension
         .retractCommand()
         .unless(() -> allowMoveWhileExtended(state))
-        .andThen(setArmGoalCommand(state.armPosition))
+        .andThen(setArmGoalCommand(state.armPosition).alongWith(runOnce(() -> setState(state))))
         .andThen(extension.setStateCommand(state.extensionState));
   }
 
@@ -186,9 +189,7 @@ public class Superstructure extends SubsystemBase implements Loggable {
   }
 
   public CommandBase floorPickupCube() {
-    return setArmGoalCommand(ArmPosition.FLOOR_PICKUP)
-        .alongWith(intake.openCommand())
-        .andThen(extension.extendCommand());
+    return setStateCommand(SuperstructureState.FLOOR_PICKUP).alongWith(intake.openCommand());
   }
 
   public void setBrakeDisplay(boolean brakeDisplay) {
