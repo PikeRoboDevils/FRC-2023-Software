@@ -12,9 +12,11 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import io.github.oblarg.oblog.Loggable;
+import io.github.oblarg.oblog.annotations.Log;
 import org.pikerobodevils.frc2023.Constants;
 
-public class Extension extends SubsystemBase {
+public class Extension extends SubsystemBase implements Loggable {
   private final DoubleSolenoid upper =
       new DoubleSolenoid(Constants.PM_TYPE, UPPER_FORWARD, UPPER_REVERSE);
   private final DoubleSolenoid lower =
@@ -44,6 +46,11 @@ public class Extension extends SubsystemBase {
     return state;
   }
 
+  @Log
+  public String getStateString() {
+    return state.toString();
+  }
+
   public CommandBase extendCommand() {
     return setStateCommand(State.Extended);
   }
@@ -54,8 +61,12 @@ public class Extension extends SubsystemBase {
 
   public CommandBase setStateCommand(State state) {
     return conditionally(
-        () -> state == getState(),
-        runOnce(() -> setState(state)).andThen(Commands.waitSeconds(.5)));
+        () -> state != getState(),
+        runOnce(
+                () -> {
+                  setState(state);
+                })
+            .andThen(Commands.waitSeconds(.5)));
   }
 
   public enum State {
