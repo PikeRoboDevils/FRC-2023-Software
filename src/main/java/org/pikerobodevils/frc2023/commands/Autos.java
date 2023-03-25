@@ -24,8 +24,18 @@ public final class Autos {
     return drivetrain.setLeftRightVoltageCommand(-3, -3).withTimeout(3.5);
   }
 
-  public CommandBase scoreMidCubeDriveBack() {
-    return scoreMidCube().andThen(driveBackAuto());
+  public CommandBase scoreLowCube() {
+    return superstructure
+        .scoreLowPosition()
+        .andThen(superstructure.score())
+        .andThen(superstructure.stowCommand());
+  }
+
+  public CommandBase scoreMidCube() {
+    return superstructure
+        .scoreMidPosition()
+        .andThen(superstructure.score())
+        .andThen(superstructure.stowCommand());
   }
 
   public CommandBase scoreHighCube() {
@@ -37,26 +47,28 @@ public final class Autos {
         .andThen(superstructure.stowCommand());
   }
 
+  public CommandBase scoreLowCubeDriveBack() {
+    return scoreLowCube().andThen(driveBackAuto());
+  }
+
+  public CommandBase scoreMidCubeDriveBack() {
+    return scoreMidCube().andThen(driveBackAuto());
+  }
+
   public CommandBase scoreHighCubeDriveBack() {
     return scoreHighCube().andThen(driveBackAuto());
   }
 
-  public CommandBase scoreMidCube() {
-    return superstructure
-        .scoreMidPosition()
-        .andThen(superstructure.score())
-        .andThen(superstructure.stowCommand());
-  }
-
-  public CommandBase scoreLowCube() {
-    return superstructure
-        .scoreLowPosition()
-        .andThen(superstructure.score())
-        .andThen(superstructure.stowCommand());
-  }
-
   public CommandBase scoreLowThenBalance() {
     return scoreLowCube().andThen(autoBalanceBackwards());
+  }
+
+  public CommandBase scoreMidThenBalance() {
+    return scoreMidCube().andThen(autoBalanceBackwards());
+  }
+
+  public CommandBase scoreHighThenBalance() {
+    return scoreHighCube().andThen(autoBalanceBackwards());
   }
 
   // Pitch: + --> backwards

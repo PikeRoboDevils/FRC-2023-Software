@@ -55,10 +55,15 @@ public class RobotContainer {
 
     autoChooser.setDefaultOption("No auto", Commands.none());
     autoChooser.addOption("Drive Back", autos.driveBackAuto());
-    autoChooser.addOption("Mid cube drive back", autos.scoreMidCubeDriveBack());
+    autoChooser.addOption("Score low cube only", autos.scoreLowCube());
     autoChooser.addOption("Score mid cube only", autos.scoreMidCube());
-    autoChooser.addOption("Score high cube", autos.scoreHighCube());
-    autoChooser.addOption("Score high cube then drive", autos.scoreHighCubeDriveBack());
+    autoChooser.addOption("Score high cube only", autos.scoreHighCube());
+    autoChooser.addOption("Low cube drive back", autos.scoreLowCubeDriveBack());
+    autoChooser.addOption("Mid cube drive back", autos.scoreMidCubeDriveBack());
+    autoChooser.addOption("High cube drive back", autos.scoreHighCubeDriveBack());
+    autoChooser.addOption("Low cube balance", autos.scoreLowThenBalance());
+    autoChooser.addOption("Mid cube balance", autos.scoreMidThenBalance());
+    autoChooser.addOption("High cube balance", autos.scoreHighThenBalance());
     autoChooser.addOption("Auto Balance Forwards", autos.autoBalanceForwards());
     autoChooser.addOption("Auto Balance Backwards", autos.autoBalanceBackwards());
 
