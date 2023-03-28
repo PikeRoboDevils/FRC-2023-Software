@@ -6,57 +6,77 @@
 package org.pikerobodevils.frc2023.subsystems;
 
 import static org.pikerobodevils.frc2023.Constants.ExtensionConstants.*;
+import static org.pikerobodevils.lib.Commands1.conditionally;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import io.github.oblarg.oblog.Loggable;
+import io.github.oblarg.oblog.annotations.Log;
 import org.pikerobodevils.frc2023.Constants;
 
-public class Extension extends SubsystemBase {
+public class Extension extends SubsystemBase implements Loggable {
   private final DoubleSolenoid upper =
       new DoubleSolenoid(Constants.PM_TYPE, UPPER_FORWARD, UPPER_REVERSE);
   private final DoubleSolenoid lower =
       new DoubleSolenoid(Constants.PM_TYPE, LOWER_FORWARD, LOWER_REVERSE);
 
-  public Extension() {
-    retract();
-  }
-
-  public enum State {
-    Extended,
-    Retracted;
-  }
-
   private State state = State.Retracted;
 
+  public Extension() {
+    setStateCommand(State.Retracted);
+  }
+
   public void extend() {
-    this.state = State.Extended;
-    upper.set(DoubleSolenoid.Value.kForward);
-    lower.set(DoubleSolenoid.Value.kForward);
+    setState(State.Retracted);
   }
 
   public void retract() {
-    this.state = State.Retracted;
-    upper.set(DoubleSolenoid.Value.kReverse);
-    lower.set(DoubleSolenoid.Value.kReverse);
+    setState(State.Retracted);
+  }
+
+  public void setState(State state) {
+    this.state = state;
+    upper.set(state.solenoidValue);
+    lower.set(state.solenoidValue);
   }
 
   public State getState() {
     return state;
   }
 
+  @Log
+  public String getStateString() {
+    return state.toString();
+  }
+
   public CommandBase extendCommand() {
-    return Commands.either(
-        runOnce(this::extend).andThen(Commands.waitSeconds(.5)),
-        runOnce(this::extend),
-        () -> getState() != State.Extended);
+    return setStateCommand(State.Extended);
   }
 
   public CommandBase retractCommand() {
-    return Commands.either(
-        runOnce(this::retract).andThen(Commands.waitSeconds(.5)),
-        runOnce(this::retract),
-        () -> getState() != State.Retracted);
+    return setStateCommand(State.Retracted);
+  }
+
+  public CommandBase setStateCommand(State state) {
+    return conditionally(
+        () -> state != getState(),
+        runOnce(
+                () -> {
+                  setState(state);
+                })
+            .andThen(Commands.waitSeconds(.5)));
+  }
+
+  public enum State {
+    Extended(DoubleSolenoid.Value.kForward),
+    Retracted(DoubleSolenoid.Value.kReverse);
+
+    public final DoubleSolenoid.Value solenoidValue;
+
+    State(DoubleSolenoid.Value solenoidValue) {
+      this.solenoidValue = solenoidValue;
+    }
   }
 }

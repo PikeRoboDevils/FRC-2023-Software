@@ -80,6 +80,9 @@ dependencies {
 
   implementation "com.github.Oblarg:Oblog:5.1.0"
 
+  implementation 'org.tinylog:tinylog-api:2.6.1'
+  implementation 'org.tinylog:tinylog-impl:2.6.1'
+
 }
 
 test {

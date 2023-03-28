@@ -15,7 +15,6 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Commands;
 import io.github.oblarg.oblog.Logger;
 import org.pikerobodevils.frc2023.commands.Autos;
-import org.pikerobodevils.frc2023.commands.Superstructure;
 import org.pikerobodevils.frc2023.simulation.ArmSim;
 import org.pikerobodevils.frc2023.subsystems.*;
 
@@ -56,10 +55,15 @@ public class RobotContainer {
 
     autoChooser.setDefaultOption("No auto", Commands.none());
     autoChooser.addOption("Drive Back", autos.driveBackAuto());
-    autoChooser.addOption("Mid cube drive back", autos.scoreMidCubeDriveBack());
+    autoChooser.addOption("Score low cube only", autos.scoreLowCube());
     autoChooser.addOption("Score mid cube only", autos.scoreMidCube());
-    autoChooser.addOption("Score high cube", autos.scoreHighCube());
-    autoChooser.addOption("Score high cube then drive", autos.scoreHighCubeDriveBack());
+    autoChooser.addOption("Score high cube only", autos.scoreHighCube());
+    autoChooser.addOption("Low cube drive back", autos.scoreLowCubeDriveBack());
+    autoChooser.addOption("Mid cube drive back", autos.scoreMidCubeDriveBack());
+    autoChooser.addOption("High cube drive back", autos.scoreHighCubeDriveBack());
+    autoChooser.addOption("Low cube balance", autos.scoreLowThenBalance());
+    autoChooser.addOption("Mid cube balance", autos.scoreMidThenBalance());
+    autoChooser.addOption("High cube balance", autos.scoreHighThenBalance());
     autoChooser.addOption("Auto Balance Forwards", autos.autoBalanceForwards());
     autoChooser.addOption("Auto Balance Backwards", autos.autoBalanceBackwards());
 
@@ -70,13 +74,11 @@ public class RobotContainer {
     controlboard
         .operator
         .x()
-        .onTrue(
-            Commands.runOnce(() -> superstructure.setCurrentState(Superstructure.GamePiece.Cube)));
+        .onTrue(Commands.runOnce(() -> superstructure.setGamePiece(Superstructure.GamePiece.Cube)));
     controlboard
         .operator
         .y()
-        .onTrue(
-            Commands.runOnce(() -> superstructure.setCurrentState(Superstructure.GamePiece.Cone)));
+        .onTrue(Commands.runOnce(() -> superstructure.setGamePiece(Superstructure.GamePiece.Cone)));
 
     controlboard.operator.leftTrigger().whileTrue(superstructure.runIntake());
 
@@ -87,6 +89,10 @@ public class RobotContainer {
         .operator
         .axisGreaterThan(XboxController.Axis.kLeftY.value, .5)
         .onTrue(superstructure.floorPickupCube());
+    controlboard
+        .operator
+        .axisLessThan(XboxController.Axis.kLeftY.value, -.5)
+        .onTrue(superstructure.setStateCommand(Superstructure.SuperstructureState.CUBE_SHOOT));
 
     controlboard.operator.a().onTrue(superstructure.stowCommand());
 

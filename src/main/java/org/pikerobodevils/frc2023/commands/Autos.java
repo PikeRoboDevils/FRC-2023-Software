@@ -9,6 +9,7 @@ import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Commands;
 import org.pikerobodevils.frc2023.subsystems.Drivetrain;
+import org.pikerobodevils.frc2023.subsystems.Superstructure;
 
 public final class Autos {
   Drivetrain drivetrain;
@@ -20,11 +21,21 @@ public final class Autos {
   }
 
   public CommandBase driveBackAuto() {
-    return drivetrain.setLeftRightVoltageCommand(-3, -3).withTimeout(3.5);
+    return drivetrain.setLeftRightVoltageCommand(-3, -3).withTimeout(3.6);
   }
 
-  public CommandBase scoreMidCubeDriveBack() {
-    return scoreMidCube().andThen(driveBackAuto());
+  public CommandBase scoreLowCube() {
+    return superstructure
+        .scoreLowPosition()
+        .andThen(superstructure.score())
+        .andThen(superstructure.stowCommand());
+  }
+
+  public CommandBase scoreMidCube() {
+    return superstructure
+        .scoreMidPosition()
+        .andThen(superstructure.score())
+        .andThen(superstructure.stowCommand());
   }
 
   public CommandBase scoreHighCube() {
@@ -36,15 +47,28 @@ public final class Autos {
         .andThen(superstructure.stowCommand());
   }
 
+  public CommandBase scoreLowCubeDriveBack() {
+    return scoreLowCube().andThen(driveBackAuto());
+  }
+
+  public CommandBase scoreMidCubeDriveBack() {
+    return scoreMidCube().andThen(driveBackAuto());
+  }
+
   public CommandBase scoreHighCubeDriveBack() {
     return scoreHighCube().andThen(driveBackAuto());
   }
 
-  public CommandBase scoreMidCube() {
-    return superstructure
-        .scoreMidPosition()
-        .andThen(superstructure.score())
-        .andThen(superstructure.stowCommand());
+  public CommandBase scoreLowThenBalance() {
+    return scoreLowCube().andThen(autoBalanceBackwards());
+  }
+
+  public CommandBase scoreMidThenBalance() {
+    return scoreMidCube().andThen(autoBalanceBackwards());
+  }
+
+  public CommandBase scoreHighThenBalance() {
+    return scoreHighCube().andThen(autoBalanceBackwards());
   }
 
   // Pitch: + --> backwards
@@ -66,7 +90,7 @@ public final class Autos {
                 .withTimeout(1)
                 .andThen(
                     drivetrain
-                        .setLeftRightVoltageCommand(-.75, -.75)
+                        .setLeftRightVoltageCommand(-1, -1)
                         .until(
                             () -> {
                               System.out.println(drivetrain.getPitchRate());
