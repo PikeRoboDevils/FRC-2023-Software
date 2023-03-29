@@ -79,6 +79,7 @@ public class SparkMax extends CANSparkMax {
     // Always start fresh and apply settings in code for each device
     // Add delay to avoid any possible timing issues.
     restoreFactoryDefaults();
+    clearFaults();
     Timer.delay(0.050);
 
     // If a parameter set fails, this will add more time to alleviate any bus traffic

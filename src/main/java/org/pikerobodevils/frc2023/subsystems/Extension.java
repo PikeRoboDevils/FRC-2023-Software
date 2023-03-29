@@ -25,7 +25,7 @@ public class Extension extends SubsystemBase implements Loggable {
   private State state = State.Retracted;
 
   public Extension() {
-    setStateCommand(State.Retracted);
+    setState(State.Retracted);
   }
 
   public void extend() {

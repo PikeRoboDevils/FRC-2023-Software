@@ -7,45 +7,36 @@ package org.pikerobodevils.frc2023.subsystems;
 
 import static org.pikerobodevils.frc2023.Constants.IntakeConstants.*;
 
-import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import io.github.oblarg.oblog.Loggable;
 import io.github.oblarg.oblog.annotations.Log;
 import java.util.function.DoubleSupplier;
 import org.pikerobodevils.frc2023.Constants;
+import org.pikerobodevils.lib.vendor.SparkMax;
 
 public class Intake extends SubsystemBase implements Loggable {
   DoubleSolenoid intakeCylinders =
       new DoubleSolenoid(Constants.PM_TYPE, FORWARD_CHANNEL, REVERSE_CHANNEL);
 
   // left
-  private final CANSparkMax main =
-      new CANSparkMax(LEFT_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
+  private final SparkMax main = new SparkMax(LEFT_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
   // right
-  private final CANSparkMax follower =
-      new CANSparkMax(RIGHT_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
+  private final SparkMax follower =
+      new SparkMax(RIGHT_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
 
-  LinearFilter currentFilter = LinearFilter.movingAverage(10);
+  LinearFilter currentFilter = LinearFilter.movingAverage(5);
   private double filteredCurrent;
 
   public Intake() {
-    main.restoreFactoryDefaults();
     main.setInverted(true);
-    // main.setSmartCurrentLimit(CURRENT_LIMIT);
-    main.burnFlash();
-    follower.restoreFactoryDefaults();
+    main.setSmartCurrentLimit(CURRENT_LIMIT);
     follower.setSmartCurrentLimit(CURRENT_LIMIT);
-    Timer.delay(.1);
     follower.follow(main, true);
-    Timer.delay(0.1);
-    follower.burnFlash();
-    Timer.delay(.1);
   }
 
   public void open() {
@@ -87,6 +78,11 @@ public class Intake extends SubsystemBase implements Loggable {
     return main.getAppliedOutput();
   }
 
+  @Log
+  public double getControllerVoltage() {
+    return main.getBusVoltage();
+  }
+
   public CommandBase intakeCubeCommand() {
     Debouncer debounce = new Debouncer(1, Debouncer.DebounceType.kRising);
     // Open arms
@@ -101,11 +97,34 @@ public class Intake extends SubsystemBase implements Loggable {
                   setRollers(INTAKE_CUBE_SPEED);
                 })
                 // Wait until current spike is detected for more than 1s
-                .until(() -> debounce.calculate(getFilteredCurrent() > INTAKE_STALL_DETECTION)))
+                .until(
+                    () -> debounce.calculate(getFilteredCurrent() > INTAKE_CUBE_STALL_DETECTION)))
         // Reduce motor power to holding power
         .finallyDo(
             (interrupted) -> {
-              System.out.println("ended");
+              setRollers(HOLD_CUBE_SPEED);
+            });
+  }
+
+  public CommandBase intakeConeCommand() {
+    Debouncer debounce = new Debouncer(5, Debouncer.DebounceType.kRising);
+    // Open arms
+    return runOnce(
+            () -> {
+              debounce.calculate(false);
+              this.close();
+            })
+        // set the intake to cube intaking speed
+        .andThen(
+            run(() -> {
+                  setRollers(INTAKE_CONE_SPEED);
+                })
+                // Wait until current spike is detected for more than 1s
+                .until(
+                    () -> debounce.calculate(getFilteredCurrent() > INTAKE_CONE_STALL_DETECTION)))
+        // Reduce motor power to holding power
+        .finallyDo(
+            (interrupted) -> {
               setRollers(HOLD_CUBE_SPEED);
             });
   }

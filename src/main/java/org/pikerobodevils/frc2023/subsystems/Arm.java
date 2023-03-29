@@ -222,7 +222,7 @@ public class Arm extends SubsystemBase implements Loggable {
         .until(this::atGoal);
   }
 
-  public CommandBase continuousGoalCommand(DoubleSupplier goalSupplier) {
+  public CommandBase setGoalCommand(DoubleSupplier goalSupplier) {
     return run(
         () -> {
           updatePositionController(goalSupplier.getAsDouble());

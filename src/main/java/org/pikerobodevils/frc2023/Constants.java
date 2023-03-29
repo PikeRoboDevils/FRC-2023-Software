@@ -45,6 +45,11 @@ public final class Constants {
     public static final double BANG_BANG_VOLTS = 0.5; // V
   }
 
+  public static class SuperstructureConstants {
+    public static final double BUMP_UP_ANGLE = Units.degreesToRadians(5);
+    public static final double BUMP_DOWN_DOUBLE = Units.degreesToRadians(-8);
+  }
+
   public static class ControlBoardConstants {
     public static final int DRIVER_PORT = 0;
     public static final int OPERATOR_PORT = 1;
@@ -109,14 +114,18 @@ public final class Constants {
     public static final int LEFT_ID = 9;
     public static final int RIGHT_ID = 10;
 
-    public static final int CURRENT_LIMIT = 20; // Amps
+    public static final int CURRENT_LIMIT = 40; // Amps
 
     public static final double INTAKE_CUBE_SPEED = -.75;
+
+    public static final double INTAKE_CONE_SPEED = -1;
 
     public static final double HOLD_CUBE_SPEED = -0.05;
 
     public static final double DEFAULT_OUTTAKE = .75;
-    public static final double INTAKE_STALL_DETECTION = 15; // Amps
+    public static final double INTAKE_CUBE_STALL_DETECTION = 15; // Amps
+
+    public static final double INTAKE_CONE_STALL_DETECTION = 35;
   }
 
   public static class ExtensionConstants {

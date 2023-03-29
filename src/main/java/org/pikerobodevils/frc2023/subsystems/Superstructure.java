@@ -10,14 +10,13 @@ import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.util.Color;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.*;
 import io.github.oblarg.oblog.Loggable;
 import io.github.oblarg.oblog.annotations.Log;
+import java.util.function.DoubleSupplier;
 import org.pikerobodevils.frc2023.Constants;
 import org.pikerobodevils.frc2023.subsystems.Arm.ArmPosition;
+import org.tinylog.Logger;
 
 public class Superstructure extends SubsystemBase implements Loggable {
   private boolean brakeDisplay = false;
@@ -98,6 +97,7 @@ public class Superstructure extends SubsystemBase implements Loggable {
   }
 
   private void setState(SuperstructureState state) {
+    Logger.tag("Superstructure").info("Setting state to {}", state.toString());
     this.lastSetState = state;
   }
 
@@ -123,18 +123,19 @@ public class Superstructure extends SubsystemBase implements Loggable {
    */
   public boolean allowMoveWhileExtended(SuperstructureState newState) {
     return Math.abs(arm.getGoalPosition() - newState.armPosition.valueRadians)
-        < Units.degreesToRadians(5);
+        < Units.degreesToRadians(8);
   }
 
   public CommandBase intakeSubstationPosition() {
-    return setArmGoalCommand(ArmPosition.SUBSTATION_PICKUP).alongWith(intake.openCommand());
+    return setStateCommand(SuperstructureState.SUBSTATION_PICKUP).alongWith(intake.openCommand());
   }
 
   public CommandBase runIntake() {
     return stateCondition(
         intake.startEnd(
             () -> {
-              intake.setRollers(-1);
+              intake.stop();
+              // intake.setRollers(-1);
               intake.close();
             },
             intake::stop),
@@ -146,6 +147,10 @@ public class Superstructure extends SubsystemBase implements Loggable {
   }
 
   public CommandBase setArmGoalCommand(ArmPosition position) {
+    return arm.setGoalCommand(position).asProxy();
+  }
+
+  public CommandBase setArmGoalCommand(DoubleSupplier position) {
     return arm.setGoalCommand(position).asProxy();
   }
 
@@ -188,13 +193,30 @@ public class Superstructure extends SubsystemBase implements Loggable {
   }
 
   public CommandBase stowCommand() {
-    return extension.retractCommand().andThen(setArmGoalCommand(ArmPosition.STOW));
+    return setStateCommand(SuperstructureState.STOW);
   }
 
   public CommandBase floorPickup() {
-    return stateCondition(
-        setStateCommand(SuperstructureState.FLOOR_PICKUP_CONE).alongWith(intake.openCommand()),
-        setStateCommand(SuperstructureState.FLOOR_PICKUP_CUBE).alongWith(intake.closeCommand()));
+    return setStateCommand(SuperstructureState.FLOOR_PICKUP_CUBE).alongWith(intake.openCommand());
+  }
+
+  public CommandBase bumpUp() {
+    return setArmGoalCommand(
+        () ->
+            getLastSetState().armPosition.valueRadians
+                + Constants.SuperstructureConstants.BUMP_UP_ANGLE);
+  }
+
+  public CommandBase bumpDown() {
+    return setArmGoalCommand(
+        () ->
+            getLastSetState().armPosition.valueRadians
+                + Constants.SuperstructureConstants.BUMP_DOWN_DOUBLE);
+  }
+
+  public CommandBase resetArmState() {
+    return setArmGoalCommand(() -> getLastSetState().armPosition.valueRadians);
+    // return deferred(() -> setStateCommand(getLastSetState()), extension, this);
   }
 
   public void setBrakeDisplay(boolean brakeDisplay) {

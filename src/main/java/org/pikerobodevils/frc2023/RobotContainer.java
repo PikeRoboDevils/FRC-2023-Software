@@ -94,6 +94,17 @@ public class RobotContainer {
         .axisLessThan(XboxController.Axis.kLeftY.value, -.5)
         .onTrue(superstructure.setStateCommand(Superstructure.SuperstructureState.CUBE_SHOOT));
 
+    controlboard
+        .operator
+        .axisLessThan(XboxController.Axis.kRightY.value, -.5)
+        .onTrue(superstructure.bumpUp())
+        .onFalse(superstructure.resetArmState());
+    controlboard
+        .operator
+        .axisGreaterThan(XboxController.Axis.kRightY.value, .5)
+        .onTrue(superstructure.bumpDown())
+        .onFalse(superstructure.resetArmState());
+
     controlboard.operator.a().onTrue(superstructure.stowCommand());
 
     controlboard.operator.pov(0).onTrue(superstructure.scoreHighPosition());
