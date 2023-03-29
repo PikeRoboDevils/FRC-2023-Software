@@ -37,7 +37,8 @@ public class Arm extends SubsystemBase implements Loggable {
     SCORE_CUBE_LOW(-60),
     SCORE_CUBE_MID(-26),
     SCORE_CUBE_HIGH(-8),
-    FLOOR_PICKUP(-52),
+    FLOOR_PICKUP_CUBE(-52),
+    FLOOR_PICKUP_CONE(-56),
     SHOOT_CUBE(5);
 
     ArmPosition(double angleDegrees) {

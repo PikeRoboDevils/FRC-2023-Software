@@ -88,7 +88,7 @@ public class RobotContainer {
     controlboard
         .operator
         .axisGreaterThan(XboxController.Axis.kLeftY.value, .5)
-        .onTrue(superstructure.floorPickupCube());
+        .onTrue(superstructure.floorPickup());
     controlboard
         .operator
         .axisLessThan(XboxController.Axis.kLeftY.value, -.5)

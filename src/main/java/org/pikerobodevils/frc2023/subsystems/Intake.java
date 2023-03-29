@@ -37,7 +37,7 @@ public class Intake extends SubsystemBase implements Loggable {
   public Intake() {
     main.restoreFactoryDefaults();
     main.setInverted(true);
-    main.setSmartCurrentLimit(CURRENT_LIMIT);
+    // main.setSmartCurrentLimit(CURRENT_LIMIT);
     main.burnFlash();
     follower.restoreFactoryDefaults();
     follower.setSmartCurrentLimit(CURRENT_LIMIT);

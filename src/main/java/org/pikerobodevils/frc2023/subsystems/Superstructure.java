@@ -5,8 +5,6 @@
 
 package org.pikerobodevils.frc2023.subsystems;
 
-import static org.pikerobodevils.lib.Commands1.*;
-
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
@@ -46,8 +44,12 @@ public class Superstructure extends SubsystemBase implements Loggable {
     SCORE_CUBE_LOW(ArmPosition.SCORE_CUBE_LOW, .2),
     SCORE_CUBE_MID(ArmPosition.SCORE_CUBE_MID, .5),
     SCORE_CUBE_HIGH(ArmPosition.SCORE_CUBE_HIGH, Constants.IntakeConstants.DEFAULT_OUTTAKE),
-    FLOOR_PICKUP(
-        ArmPosition.FLOOR_PICKUP,
+    FLOOR_PICKUP_CUBE(
+        ArmPosition.FLOOR_PICKUP_CUBE,
+        Extension.State.Extended,
+        Constants.IntakeConstants.DEFAULT_OUTTAKE),
+    FLOOR_PICKUP_CONE(
+        ArmPosition.FLOOR_PICKUP_CONE,
         Extension.State.Extended,
         Constants.IntakeConstants.DEFAULT_OUTTAKE),
     CUBE_SHOOT(ArmPosition.SHOOT_CUBE, 1);
@@ -130,11 +132,12 @@ public class Superstructure extends SubsystemBase implements Loggable {
 
   public CommandBase runIntake() {
     return stateCondition(
-        intake.runOnce(
+        intake.startEnd(
             () -> {
-              intake.stop();
+              intake.setRollers(-1);
               intake.close();
-            }),
+            },
+            intake::stop),
         intake.intakeCubeCommand());
   }
 
@@ -188,8 +191,10 @@ public class Superstructure extends SubsystemBase implements Loggable {
     return extension.retractCommand().andThen(setArmGoalCommand(ArmPosition.STOW));
   }
 
-  public CommandBase floorPickupCube() {
-    return setStateCommand(SuperstructureState.FLOOR_PICKUP).alongWith(intake.openCommand());
+  public CommandBase floorPickup() {
+    return stateCondition(
+        setStateCommand(SuperstructureState.FLOOR_PICKUP_CONE).alongWith(intake.openCommand()),
+        setStateCommand(SuperstructureState.FLOOR_PICKUP_CUBE).alongWith(intake.closeCommand()));
   }
 
   public void setBrakeDisplay(boolean brakeDisplay) {
